@@ -4,12 +4,37 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
-    <com.mottimotti.vodonapor.LeftToolBar
+
+    <ScrollView
             android:id="@+id/leftToolBar"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:background="#235435"/>
+            android:background="#235435"
+            android:layout_gravity="center">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <Button
+                    android:layout_marginTop="42dp"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"/>
+
+            <Button
+                    android:layout_marginTop="442dp"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"/>
+
+            <Button
+                    android:layout_marginTop="642dp"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"/>
+        </LinearLayout>
+
+
+    </ScrollView>
 
     <com.mottimotti.vodonapor.DocumentPlot
             android:id="@+id/documentPlot"

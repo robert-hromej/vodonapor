@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
         cilinder = new Nasos(this, new GraphParams(90, 90, 150, 150));
         plot.addView(cilinder);
 
-        plot.invalidate();
+//        plot.invalidate();
 
 //        cilinder = new Nasos(this, new GraphParams(300, 100, 150, 150));
 //        plot.addView(cilinder);
