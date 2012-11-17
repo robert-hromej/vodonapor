@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.GraphObject.Nasos;
+import com.mottimotti.vodonapor.GraphObject.Tryba;
+import com.mottimotti.vodonapor.ui.DocumentPlot;
 
 public class MainActivity extends Activity {
 
@@ -14,20 +16,10 @@ public class MainActivity extends Activity {
 
         DocumentPlot plot = (DocumentPlot) findViewById(R.id.documentPlot);
 
-        Nasos cilinder;
+        plot.addGraphObject(new Nasos(this, new GraphParams(-50, 50, 100, 100)));
 
-        cilinder = new Nasos(this, new GraphParams(-50, 50, 100, 100));
-        plot.addView(cilinder);
+        plot.addGraphObject(new Nasos(this, new GraphParams(90, 90, 200, 100)));
 
-        cilinder = new Nasos(this, new GraphParams(90, 90, 150, 150));
-        plot.addView(cilinder);
-
-//        plot.invalidate();
-
-//        cilinder = new Nasos(this, new GraphParams(300, 100, 150, 150));
-//        plot.addView(cilinder);
-//
-//        cilinder = new Nasos(this, new GraphParams(300, 100, 150, 150));
-//        plot.addView(cilinder);
+        plot.addGraphObject(new Tryba(this, new GraphParams(130, 190, 200, 200)));
     }
 }

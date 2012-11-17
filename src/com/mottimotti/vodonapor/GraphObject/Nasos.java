@@ -4,9 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 
 public class Nasos extends GraphObject {
 
@@ -20,7 +17,6 @@ public class Nasos extends GraphObject {
 
     @Override
     public void onDraw(Canvas canvas) {
-        Log.e("sdf", "df");
         Paint paint = new Paint();
 
         paint.setStyle(Paint.Style.FILL);
@@ -29,6 +25,8 @@ public class Nasos extends GraphObject {
 
         paint.setAntiAlias(true);
         paint.setColor(Color.YELLOW);
-        canvas.drawCircle(this.getWidth() / 2, this.getHeight() / 2, this.getHeight() / 4, paint);
+        canvas.drawRect(10, 10, getWidth() - 10, getHeight() - 10, paint);
+
+        super.onDraw(canvas);
     }
 }

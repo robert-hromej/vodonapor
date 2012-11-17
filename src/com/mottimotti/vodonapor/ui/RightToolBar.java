@@ -1,4 +1,4 @@
-package com.mottimotti.vodonapor;
+package com.mottimotti.vodonapor.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
