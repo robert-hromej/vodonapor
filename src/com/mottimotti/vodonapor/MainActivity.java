@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
 
         Nasos cilinder;
 
-        cilinder = new Nasos(this, new GraphParams(50, 50, 100, 100));
+        cilinder = new Nasos(this, new GraphParams(-50, 50, 100, 100));
         plot.addView(cilinder);
 
         cilinder = new Nasos(this, new GraphParams(90, 90, 150, 150));

@@ -17,29 +17,6 @@ public abstract class GraphObject extends View {
         setParams(new GraphParams(0, 0, 100, 100));
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        int state = e.getAction();
-
-        int eventX = (int) e.getX();
-        int eventY = (int) e.getY();
-
-        if (state == MotionEvent.ACTION_DOWN) {
-            offsetX = params.x - eventX;
-            offsetY = params.y - eventY;
-        } else if (state == MotionEvent.ACTION_UP) {
-            int destX = eventX + offsetX;
-            int destY = eventY + offsetY;
-            // Collision detection?
-            params.x = destX;
-            params.y = destY;
-            refreshLayoutParams();
-        } else if (state == MotionEvent.ACTION_MOVE) {
-        }
-        invalidate();
-        return true;
-    }
-
     public GraphObject(Context context, GraphParams params) {
         super(context);
         setParams(params);
