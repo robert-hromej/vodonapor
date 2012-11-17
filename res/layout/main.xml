@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+
+    <com.mottimotti.vodonapor.LeftToolBar
+            android:id="@+id/leftToolBar"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#235435"/>
+
+    <com.mottimotti.vodonapor.DocumentPlot
+            android:id="@+id/documentPlot"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:background="#645343"/>
+
+    <com.mottimotti.vodonapor.RightToolBar
+            android:id="@+id/rightToolBar"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#987632"/>
+
+</LinearLayout>
+
