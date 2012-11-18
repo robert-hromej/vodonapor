@@ -8,5 +8,6 @@ public class LeftToolBar extends ListView {
 
     public LeftToolBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+
     }
 }

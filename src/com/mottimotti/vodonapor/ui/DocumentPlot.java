@@ -19,6 +19,8 @@ public class DocumentPlot extends RelativeLayout {
 
     private List<GraphObject> children;
 
+    private GraphObject.OnSelectListener onSelectListener;
+
     public DocumentPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -30,7 +32,6 @@ public class DocumentPlot extends RelativeLayout {
         addView(graphObject);
         graphObject.setOnTouchListener(new ChildOnTouchListener());
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -55,6 +56,10 @@ public class DocumentPlot extends RelativeLayout {
         return true;
     }
 
+    public void setOnSelectListener(GraphObject.OnSelectListener onSelectListener) {
+        this.onSelectListener = onSelectListener;
+    }
+
     private class ChildOnTouchListener implements View.OnTouchListener {
 
         private int currentX;
@@ -68,6 +73,7 @@ public class DocumentPlot extends RelativeLayout {
                 if (selected != null) selected.setSelectedState(false);
                 selected = graph;
                 graph.setSelectedState(true);
+                onSelectListener.onSelect(graph);
             }
 
             switch (event.getAction()) {
@@ -81,6 +87,7 @@ public class DocumentPlot extends RelativeLayout {
                     int y2 = (int) event.getRawY();
 
                     graph.moveBy(currentX - x2, currentY - y2);
+                    onSelectListener.onMove(graph);
 
                     currentX = x2;
                     currentY = y2;

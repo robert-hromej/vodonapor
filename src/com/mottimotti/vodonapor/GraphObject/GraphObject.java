@@ -67,4 +67,10 @@ public abstract class GraphObject extends View {
             canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
         }
     }
+
+    public static interface OnSelectListener {
+        void onSelect(GraphObject object);
+
+        void onMove(GraphObject object);
+    }
 }
