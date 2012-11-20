@@ -33,6 +33,14 @@ public abstract class GraphObject extends View {
         return params.x + params.width;
     }
 
+    public int getTopY() {
+        return params.y;
+    }
+
+    public int getBottomY() {
+        return params.y + params.height;
+    }
+
     public void moveTo(int x, int y) {
         params.x = x;
         params.y = y;
