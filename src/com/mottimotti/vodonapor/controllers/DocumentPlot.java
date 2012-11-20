@@ -18,7 +18,7 @@ public class DocumentPlot extends RelativeLayout {
 
     private int currentX, currentY;
 
-    private GraphObject selected;
+    public GraphObject selected;
 
     private List<GraphObject> children;
 

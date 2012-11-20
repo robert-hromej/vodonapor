@@ -10,6 +10,8 @@ import com.mottimotti.vodonapor.util.LayerPosition;
 
 public class Toolbar extends LinearLayout implements View.OnClickListener {
 
+    private View copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn;
+
     private OnChangeLayerPositionListener onChangeLayerPositionListener;
 
     private OnCopyListener onCopyListener;
@@ -22,24 +24,32 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) inflater.inflate(R.layout.toolbar, this);
 
-        findViewById(R.id.copyBtn).setOnClickListener(new OnClickListener() {
+        copyBtn = findViewById(R.id.copyBtn);
+        deleteBtn = findViewById(R.id.deleteBtn);
+
+        moveBackBtn = findViewById(R.id.moveBackBtn);
+        moveBackwardBtn = findViewById(R.id.moveBackwardsBtn);
+        moveForwardBtn = findViewById(R.id.moveForwardsBtn);
+        moveFrontBtn = findViewById(R.id.moveFrontBtn);
+
+        copyBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 onCopyListener.onCopy();
             }
         });
 
-        findViewById(R.id.deleteBtn).setOnClickListener(new OnClickListener() {
+        deleteBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 onDeleteListener.onDelete();
             }
         });
 
-        findViewById(R.id.moveBackBtn).setOnClickListener(this);
-        findViewById(R.id.moveBackwardsBtn).setOnClickListener(this);
-        findViewById(R.id.moveForwardsBtn).setOnClickListener(this);
-        findViewById(R.id.moveFrontBtn).setOnClickListener(this);
+        moveBackBtn.setOnClickListener(this);
+        moveBackwardBtn.setOnClickListener(this);
+        moveForwardBtn.setOnClickListener(this);
+        moveFrontBtn.setOnClickListener(this);
     }
 
     @Override
@@ -78,6 +88,18 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
 
     public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
         this.onDeleteListener = onDeleteListener;
+    }
+
+    public void showButtons() {
+        View[] views = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn};
+
+        for (View view : views) view.setAlpha(1f);
+    }
+
+    public void hideButtons() {
+        View[] views = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn};
+
+        for (View view : views) view.setAlpha(0.4f);
     }
 
     public static interface OnChangeLayerPositionListener {

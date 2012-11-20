@@ -12,8 +12,6 @@ import java.util.Random;
 
 public class MainActivity extends Activity implements GraphObject.OnSelectListener, GraphObject.OnMoveListener, Toolbar.OnChangeLayerPositionListener, Toolbar.OnCopyListener, Toolbar.OnDeleteListener {
 
-    private GraphObject selectedObject;
-
     private Toolbar toolbar;
     private InfoBox infoBox;
     private DocumentPlot plot;
@@ -33,6 +31,7 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
         toolbar.setOnChangeLayerPositionListener(this);
         toolbar.setOnCopyListener(this);
         toolbar.setOnDeleteListener(this);
+        toolbar.hideButtons();
 
         fillFakeDocument();
     }
@@ -49,9 +48,8 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
 
     @Override
     public void onSelect(GraphObject object) {
-        selectedObject = object;
-//        selectedObject.invalidate();
-        infoBox.update(selectedObject);
+        toolbar.showButtons();
+        infoBox.update(object);
     }
 
     @Override
@@ -61,7 +59,8 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
 
     @Override
     public void onChange(LayerPosition layerPosition) {
-        plot.changePosition(selectedObject, layerPosition);
+        if (plot.selected == null) return;
+        plot.changePosition(plot.selected, layerPosition);
     }
 
     @Override
@@ -72,5 +71,6 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
     @Override
     public void onDelete() {
         plot.deleteSelectedObject();
+        toolbar.hideButtons();
     }
 }
