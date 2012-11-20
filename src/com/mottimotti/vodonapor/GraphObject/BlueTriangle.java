@@ -6,13 +6,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 
-public class Tryba extends GraphObject {
+public class BlueTriangle extends GraphObject {
 
-    public Tryba(Context context, GraphParams params) {
+    public BlueTriangle(Context context, GraphParams params) {
         super(context, params);
     }
 
-    public Tryba(Context context) {
+    public BlueTriangle(Context context) {
         super(context);
     }
 
@@ -28,11 +28,13 @@ public class Tryba extends GraphObject {
         paint.setColor(Color.BLUE);
 
         Path path = new Path();
+
         path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(12, 15);
-        path.lineTo(getWidth() / 4, getHeight() / 8);
-        path.lineTo(getWidth() / 22, getHeight());
-        path.lineTo(getWidth(), getHeight());
+
+        path.moveTo(getWidth() / 2, 10);
+
+        path.lineTo(getWidth() - 10, getHeight() - 10);
+        path.lineTo(10, getHeight() - 10);
         path.close();
 
         canvas.drawPath(path, paint);

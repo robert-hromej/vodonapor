@@ -2,11 +2,7 @@ package com.mottimotti.vodonapor;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
-import com.mottimotti.vodonapor.GraphObject.GraphParams;
-import com.mottimotti.vodonapor.GraphObject.Nasos;
-import com.mottimotti.vodonapor.GraphObject.Tryba;
+import com.mottimotti.vodonapor.GraphObject.*;
 import com.mottimotti.vodonapor.controllers.DocumentPlot;
 import com.mottimotti.vodonapor.controllers.Header;
 import com.mottimotti.vodonapor.controllers.InfoBox;
@@ -46,9 +42,10 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
     private void fillFakeDocument() {
         Random r = new Random();
 
-        for (int i = 0; i < 10; i++) {
-            plot.addGraphObject(new Nasos(this, new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10)));
-            plot.addGraphObject(new Tryba(this, new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10)));
+        for (int i = 0; i < 5; i++) {
+            plot.addGraphObject(new YellowRect(this, new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10)));
+            plot.addGraphObject(new BlueTriangle(this, new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10)));
+            plot.addGraphObject(new GreenCircle(this, new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10)));
         }
     }
 

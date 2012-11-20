@@ -5,13 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-public class Nasos extends GraphObject {
+public class YellowRect extends GraphObject {
 
-    public Nasos(Context context) {
+    public YellowRect(Context context) {
         super(context);
     }
 
-    public Nasos(Context context, GraphParams params) {
+    public YellowRect(Context context, GraphParams params) {
         super(context, params);
     }
 
