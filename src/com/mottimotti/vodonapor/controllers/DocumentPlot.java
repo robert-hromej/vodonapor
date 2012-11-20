@@ -153,7 +153,7 @@ public class DocumentPlot extends RelativeLayout {
                     int y2 = startY - (int) event.getRawY();
 
                     if (changeMode == 1) {
-                        graph.resizeTo(originalParams.width - x2, originalParams.height - y2);
+                        graph.resizeTo(magnet.updateWidth(originalParams.width - x2), magnet.updateHeight(originalParams.height - y2));
                     } else if (changeMode == 2) {
                         graph.moveTo(magnet.updateX(originalParams.x - x2), magnet.updateY(originalParams.y - y2));
                     }

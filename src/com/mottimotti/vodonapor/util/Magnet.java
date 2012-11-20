@@ -3,56 +3,32 @@ package com.mottimotti.vodonapor.util;
 import com.mottimotti.vodonapor.GraphObject.GraphObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Magnet {
 
-    private List<Integer> listX;
+    private HashSet<Integer> listX = new HashSet<Integer>();
 
-    private List<Integer> listY;
+    private HashSet<Integer> listY = new HashSet<Integer>();
 
     private GraphObject currentObject;
 
     public Magnet(GraphObject object, List<GraphObject> children) {
         this.currentObject = object;
-        setListX(children);
-        setListY(children);
-    }
 
-    public void setListX(List<GraphObject> objects) {
-        this.listX = new ArrayList<Integer>();
+        for (GraphObject child : children) {
+            if (currentObject == child) continue;
 
-        for (GraphObject object : objects) {
-            if (currentObject != object) {
-                listX.add(object.getLeftX());
-                listX.add(object.getRightX());
-            }
+            listX.add(child.getLeftX());
+            listX.add(child.getRightX());
+            listY.add(child.getTopY());
+            listY.add(child.getBottomY());
         }
     }
 
-    public void setListY(List<GraphObject> objects) {
-        this.listY = new ArrayList<Integer>();
-
-        for (GraphObject object : objects) {
-            if (currentObject != object) {
-                listY.add(object.getTopY());
-                listY.add(object.getBottomY());
-            }
-        }
-    }
-
-    public int updateX(int x) {
-        Integer neighborhood = getNeighborhoodX();
-        return (Math.abs(x - neighborhood) < 10) ? neighborhood : x;
-    }
-
-    public int updateY(int y) {
-        Integer neighborhood = getNeighborhoodY();
-        return (Math.abs(y - neighborhood) < 10) ? neighborhood : y;
-    }
-
-    private Integer getNeighborhoodX() {
-        Integer resultX = null;
+    public int updateX(int originalX) {
+        Integer neighborhood = null;
         Integer minD = null;
         Integer d;
 
@@ -61,21 +37,21 @@ public class Magnet {
             d = Math.abs(x - currentObject.getLeftX());
             if (minD == null || minD > d) {
                 minD = d;
-                resultX = x;
+                neighborhood = x;
             }
 
             d = Math.abs(x - currentObject.getRightX());
             if (minD == null || minD > d) {
                 minD = d;
-                resultX = x - currentObject.params.width;
+                neighborhood = x - currentObject.params.width;
             }
         }
 
-        return resultX;
+        return (Math.abs(originalX - neighborhood) < 10) ? neighborhood : originalX;
     }
 
-    private Integer getNeighborhoodY() {
-        Integer resultY = null;
+    public int updateY(int originalY) {
+        Integer neighborhood = null;
         Integer minD = null;
         Integer d;
 
@@ -84,16 +60,50 @@ public class Magnet {
             d = Math.abs(y - currentObject.getTopY());
             if (minD == null || minD > d) {
                 minD = d;
-                resultY = y;
+                neighborhood = y;
             }
 
             d = Math.abs(y - currentObject.getBottomY());
             if (minD == null || minD > d) {
                 minD = d;
-                resultY = y - currentObject.params.height;
+                neighborhood = y - currentObject.params.height;
             }
         }
 
-        return resultY;
+        return (Math.abs(originalY - neighborhood) < 10) ? neighborhood : originalY;
+    }
+
+    public int updateWidth(int originalWidth) {
+        Integer neighborhood = null;
+        Integer minD = null;
+        Integer d;
+
+        for (Integer x : listX) {
+
+            d = Math.abs(x - currentObject.getLeftX() - originalWidth);
+            if (minD == null || minD > d) {
+                minD = d;
+                neighborhood = x - currentObject.getLeftX();
+            }
+        }
+
+        return (Math.abs(originalWidth - neighborhood) < 10) ? neighborhood : originalWidth;
+    }
+
+    public int updateHeight(int originalHeight) {
+        Integer neighborhood = null;
+        Integer minD = null;
+        Integer d;
+
+        for (Integer y : listY) {
+
+            d = Math.abs(y - currentObject.getTopY() - originalHeight);
+            if (minD == null || minD > d) {
+                minD = d;
+                neighborhood = y - currentObject.getTopY();
+            }
+        }
+
+        return (Math.abs(originalHeight - neighborhood) < 10) ? neighborhood : originalHeight;
     }
 }
