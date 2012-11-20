@@ -16,10 +16,4 @@ public class Header extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) inflater.inflate(R.layout.header, this);
     }
-
-    public void update(GraphObject object) {
-        TextView typeLabel = (TextView) findViewById(R.id.statusLabel);
-        typeLabel.setText("Type: " + object.getClass().getSimpleName() + "; x: " + object.getX() + "; y: "
-                + object.getY() + "; width: " + object.getWidth() + "; height: " + object.getHeight());
-    }
 }

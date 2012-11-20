@@ -13,7 +13,6 @@ import com.mottimotti.vodonapor.util.LayerPosition;
 import com.mottimotti.vodonapor.util.Magnet;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DocumentPlot extends RelativeLayout {

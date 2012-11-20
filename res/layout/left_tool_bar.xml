@@ -7,12 +7,13 @@
 
     <LinearLayout
             android:id="@+id/objectList"
-            android:layout_width="0dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="#645524"/>
+            android:background="#645524"
+            android:visibility="gone"/>
 
     <LinearLayout
+            android:id="@+id/openCloseBtn"
             android:layout_width="20dp"
             android:layout_height="match_parent"
             android:background="#744734"/>

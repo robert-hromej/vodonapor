@@ -3,13 +3,13 @@ package com.mottimotti.vodonapor;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import com.mottimotti.vodonapor.GraphObject.GraphObject;
 import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.GraphObject.Nasos;
 import com.mottimotti.vodonapor.GraphObject.Tryba;
 import com.mottimotti.vodonapor.controllers.DocumentPlot;
 import com.mottimotti.vodonapor.controllers.Header;
+import com.mottimotti.vodonapor.controllers.InfoBox;
 import com.mottimotti.vodonapor.util.LayerPosition;
 
 import java.util.Random;
@@ -19,6 +19,7 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
     private GraphObject selectedObject;
 
     private Header header;
+    private InfoBox infoBox;
     private DocumentPlot plot;
 
     @Override
@@ -27,6 +28,7 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
         setContentView(R.layout.main);
 
         plot = (DocumentPlot) findViewById(R.id.documentPlot);
+        infoBox = (InfoBox) findViewById(R.id.infoBox);
         header = (Header) findViewById(R.id.header);
 
         findViewById(R.id.moveBackBtn).setOnClickListener(this);
@@ -52,12 +54,12 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
     @Override
     public void onSelect(GraphObject object) {
         selectedObject = object;
-        header.update(object);
+        infoBox.update(object);
     }
 
     @Override
     public void onMove(GraphObject object) {
-        header.update(object);
+        infoBox.update(object);
     }
 
     @Override

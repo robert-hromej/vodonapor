@@ -110,8 +110,6 @@ public abstract class GraphObject extends View {
         }
     }
 
-
-
     public static interface OnSelectListener {
         void onSelect(GraphObject object);
     }

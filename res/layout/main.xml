@@ -14,21 +14,31 @@
                   android:layout_height="fill_parent">
 
         <com.mottimotti.vodonapor.controllers.LeftToolBar
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"/>
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"/>
 
-        <com.mottimotti.vodonapor.controllers.DocumentPlot
-                android:id="@+id/documentPlot"
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="20"
-                android:background="#645343"/>
+        <LinearLayout android:layout_width="0dp"
+                      android:orientation="vertical"
+                      android:layout_height="fill_parent"
+                      android:layout_weight="1">
+
+            <com.mottimotti.vodonapor.controllers.DocumentPlot
+                    android:id="@+id/documentPlot"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="#645343"/>
+
+            <com.mottimotti.vodonapor.controllers.InfoBox
+                    android:id="@+id/infoBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </LinearLayout>
+
 
         <com.mottimotti.vodonapor.controllers.RightToolBar
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"/>
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"/>
 
     </LinearLayout>
 </LinearLayout>
