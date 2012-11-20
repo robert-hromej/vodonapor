@@ -18,6 +18,11 @@ public abstract class GraphObject extends View {
         setParams(new GraphParams(0, 0, 100, 100));
     }
 
+    public GraphObject(Context context, GraphParams params) {
+        super(context);
+        setParams(params);
+    }
+
     public int getLeftX() {
         return params.x;
     }
@@ -58,15 +63,10 @@ public abstract class GraphObject extends View {
     }
 
     public void resizeTo(int width, int height) {
-        params.width = width;
-        params.height = height;
+        params.width = Math.max(10, width);
+        params.height = Math.max(10, height);
         refreshLayoutParams();
         invalidate();
-    }
-
-    public GraphObject(Context context, GraphParams params) {
-        super(context);
-        setParams(params);
     }
 
     public void setParams(GraphParams params) {
