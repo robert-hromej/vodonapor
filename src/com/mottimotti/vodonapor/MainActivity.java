@@ -9,6 +9,7 @@ import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.GraphObject.Nasos;
 import com.mottimotti.vodonapor.GraphObject.Tryba;
 import com.mottimotti.vodonapor.controllers.DocumentPlot;
+import com.mottimotti.vodonapor.controllers.Header;
 import com.mottimotti.vodonapor.util.LayerPosition;
 
 import java.util.Random;
@@ -17,13 +18,26 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
 
     private GraphObject selectedObject;
 
+    private Header header;
+    private DocumentPlot plot;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        DocumentPlot plot = (DocumentPlot) findViewById(R.id.documentPlot);
+        plot = (DocumentPlot) findViewById(R.id.documentPlot);
+        header = (Header) findViewById(R.id.header);
 
+        findViewById(R.id.moveBackBtn).setOnClickListener(this);
+        findViewById(R.id.moveBackwardsBtn).setOnClickListener(this);
+        findViewById(R.id.moveForwardsBtn).setOnClickListener(this);
+        findViewById(R.id.moveFrontBtn).setOnClickListener(this);
+
+        fillFakeDocument();
+    }
+
+    private void fillFakeDocument() {
         Random r = new Random();
 
         for (int i = 0; i < 10; i++) {
@@ -33,46 +47,17 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
 
         plot.setOnSelectListener(this);
         plot.setOnMoveListener(this);
-
-        findViewById(R.id.moveBackBtn).setOnClickListener(this);
-        findViewById(R.id.moveBackwardsBtn).setOnClickListener(this);
-        findViewById(R.id.moveForwardsBtn).setOnClickListener(this);
-        findViewById(R.id.moveFrontBtn).setOnClickListener(this);
     }
 
     @Override
     public void onSelect(GraphObject object) {
-
         selectedObject = object;
-
-        TextView typeLabel = (TextView) findViewById(R.id.statusLabel);
-        TextView xLabel = (TextView) findViewById(R.id.objectXLabel);
-        TextView yLabel = (TextView) findViewById(R.id.objectYLabel);
-        TextView widthLabel = (TextView) findViewById(R.id.objectWidthLabel);
-        TextView heightLabel = (TextView) findViewById(R.id.objectHeightLabel);
-
-        typeLabel.setText(object.getClass().getSimpleName());
-        xLabel.setText("x: " + object.getX());
-        yLabel.setText("y: " + object.getY());
-
-        widthLabel.setText("width: " + object.getWidth());
-        heightLabel.setText("height: " + object.getHeight());
+        header.update(object);
     }
 
     @Override
     public void onMove(GraphObject object) {
-        TextView typeLabel = (TextView) findViewById(R.id.statusLabel);
-        TextView xLabel = (TextView) findViewById(R.id.objectXLabel);
-        TextView yLabel = (TextView) findViewById(R.id.objectYLabel);
-        TextView widthLabel = (TextView) findViewById(R.id.objectWidthLabel);
-        TextView heightLabel = (TextView) findViewById(R.id.objectHeightLabel);
-
-        typeLabel.setText(object.getClass().getSimpleName());
-        xLabel.setText("x: " + object.getX());
-        yLabel.setText("y: " + object.getY());
-
-        widthLabel.setText("width: " + object.getWidth());
-        heightLabel.setText("height: " + object.getHeight());
+        header.update(object);
     }
 
     @Override
