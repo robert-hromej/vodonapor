@@ -4,29 +4,25 @@ import android.app.Activity;
 import android.os.Bundle;
 import com.mottimotti.vodonapor.GraphObject.*;
 import com.mottimotti.vodonapor.controllers.DocumentPlot;
-import com.mottimotti.vodonapor.controllers.Header;
 import com.mottimotti.vodonapor.controllers.InfoBox;
 import com.mottimotti.vodonapor.controllers.Toolbar;
 import com.mottimotti.vodonapor.util.LayerPosition;
 
 import java.util.Random;
 
-public class MainActivity extends Activity implements GraphObject.OnSelectListener, GraphObject.OnMoveListener, Toolbar.OnChangeLayerPositionListener {
+public class MainActivity extends Activity implements GraphObject.OnSelectListener, GraphObject.OnMoveListener, Toolbar.OnChangeLayerPositionListener, Toolbar.OnCopyListener, Toolbar.OnDeleteListener {
 
     private GraphObject selectedObject;
 
-    private Header header;
     private Toolbar toolbar;
     private InfoBox infoBox;
     private DocumentPlot plot;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        header = (Header) findViewById(R.id.header);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         infoBox = (InfoBox) findViewById(R.id.infoBox);
         plot = (DocumentPlot) findViewById(R.id.documentPlot);
@@ -35,6 +31,8 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
         plot.setOnMoveListener(this);
 
         toolbar.setOnChangeLayerPositionListener(this);
+        toolbar.setOnCopyListener(this);
+        toolbar.setOnDeleteListener(this);
 
         fillFakeDocument();
     }
@@ -52,6 +50,7 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
     @Override
     public void onSelect(GraphObject object) {
         selectedObject = object;
+//        selectedObject.invalidate();
         infoBox.update(selectedObject);
     }
 
@@ -63,5 +62,15 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
     @Override
     public void onChange(LayerPosition layerPosition) {
         plot.changePosition(selectedObject, layerPosition);
+    }
+
+    @Override
+    public void onCopy() {
+        plot.copySelectedObject();
+    }
+
+    @Override
+    public void onDelete() {
+        plot.deleteSelectedObject();
     }
 }

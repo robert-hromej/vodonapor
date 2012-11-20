@@ -6,8 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
-import com.mottimotti.vodonapor.GraphObject.GraphParams;
+import com.mottimotti.vodonapor.GraphObject.*;
 import com.mottimotti.vodonapor.R;
 import com.mottimotti.vodonapor.util.LayerPosition;
 import com.mottimotti.vodonapor.util.Magnet;
@@ -80,6 +79,40 @@ public class DocumentPlot extends RelativeLayout {
 
     public void setOnMoveListener(GraphObject.OnMoveListener onMoveListener) {
         this.onMoveListener = onMoveListener;
+    }
+
+    public void copySelectedObject() {
+        if (selected == null) return;
+
+        GraphParams newParams = selected.params.clone();
+
+        newParams.x = newParams.x + 20;
+        newParams.y = newParams.y + 20;
+
+        GraphObject newObject = null;
+
+        if (selected instanceof BlueTriangle) {
+            newObject = new BlueTriangle(getContext(), newParams);
+        } else if (selected instanceof GreenCircle) {
+            newObject = new GreenCircle(getContext(), newParams);
+        } else if (selected instanceof YellowRect) {
+            newObject = new YellowRect(getContext(), newParams);
+        }
+
+        addGraphObject(newObject);
+
+        selected.setSelectedState(false);
+        selected = newObject;
+        selected.setSelectedState(true);
+        onSelectListener.onSelect(selected);
+    }
+
+    public void deleteSelectedObject() {
+        if (selected == null) return;
+
+        children.remove(selected);
+        removeView(selected);
+        selected = null;
     }
 
     private class ChildOnTouchListener implements View.OnTouchListener {

@@ -5,24 +5,64 @@
               android:layout_height="wrap_content"
               android:padding="5dp">
 
+    <Button android:id="@+id/openBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/open"
+            android:layout_margin="5dp"/>
+
+    <Button android:id="@+id/saveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/save"
+            android:layout_margin="5dp"/>
+
+    <Button android:id="@+id/undoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/undo"
+            android:layout_margin="5dp"/>
+
+    <Button android:id="@+id/redoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/redo"
+            android:layout_margin="5dp"/>
+
+    <Button android:id="@+id/copyBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/copy"
+            android:layout_margin="5dp"/>
+
     <Button android:id="@+id/moveBackBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_move_back"/>
+            android:background="@drawable/shape_move_back"
+            android:layout_margin="5dp"/>
 
     <Button android:id="@+id/moveBackwardsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_move_backwards"/>
+            android:background="@drawable/shape_move_backwards"
+            android:layout_margin="5dp"/>
 
     <Button android:id="@+id/moveForwardsBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_move_forwards"/>
+            android:background="@drawable/shape_move_forwards"
+            android:layout_margin="5dp"/>
 
     <Button android:id="@+id/moveFrontBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_move_front"/>
+            android:background="@drawable/shape_move_front"
+            android:layout_margin="5dp"/>
+
+    <Button android:id="@+id/deleteBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/delete"
+            android:layout_margin="5dp"/>
 
 </LinearLayout>

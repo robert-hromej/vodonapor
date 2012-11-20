@@ -5,5 +5,4 @@
           android:layout_height="wrap_content"
           android:background="#344324"
           android:paddingLeft="20dp"
-          android:paddingRight="20dp"
-          android:text="24234"/>
+          android:paddingRight="20dp"/>

@@ -12,11 +12,29 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
 
     private OnChangeLayerPositionListener onChangeLayerPositionListener;
 
+    private OnCopyListener onCopyListener;
+
+    private OnDeleteListener onDeleteListener;
+
     public Toolbar(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) inflater.inflate(R.layout.toolbar, this);
+
+        findViewById(R.id.copyBtn).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onCopyListener.onCopy();
+            }
+        });
+
+        findViewById(R.id.deleteBtn).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onDeleteListener.onDelete();
+            }
+        });
 
         findViewById(R.id.moveBackBtn).setOnClickListener(this);
         findViewById(R.id.moveBackwardsBtn).setOnClickListener(this);
@@ -54,7 +72,23 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         this.onChangeLayerPositionListener = onChangeLayerPositionListener;
     }
 
+    public void setOnCopyListener(OnCopyListener onCopyListener) {
+        this.onCopyListener = onCopyListener;
+    }
+
+    public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
+        this.onDeleteListener = onDeleteListener;
+    }
+
     public static interface OnChangeLayerPositionListener {
         void onChange(LayerPosition layerPosition);
+    }
+
+    public static interface OnCopyListener {
+        public void onCopy();
+    }
+
+    public static interface OnDeleteListener {
+        public void onDelete();
     }
 }

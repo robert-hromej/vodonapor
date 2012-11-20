@@ -4,11 +4,6 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
-    <com.mottimotti.vodonapor.controllers.Header
-            android:id="@+id/header"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
-
     <com.mottimotti.vodonapor.controllers.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="fill_parent"
