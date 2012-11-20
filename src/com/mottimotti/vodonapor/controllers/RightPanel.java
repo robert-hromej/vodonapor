@@ -7,15 +7,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import com.mottimotti.vodonapor.R;
 
-public class RightToolBar extends LinearLayout implements View.OnClickListener {
+public class RightPanel extends LinearLayout implements View.OnClickListener {
 
     private View content;
 
-    public RightToolBar(Context context, AttributeSet attrs) {
+    public RightPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflater != null) inflater.inflate(R.layout.right_tool_bar, this);
+        if (inflater != null) inflater.inflate(R.layout.right_panel, this);
 
         content = findViewById(R.id.objectList);
 

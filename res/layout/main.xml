@@ -13,7 +13,7 @@
                   android:layout_width="fill_parent"
                   android:layout_height="fill_parent">
 
-        <com.mottimotti.vodonapor.controllers.LeftToolBar
+        <com.mottimotti.vodonapor.controllers.LeftPanel
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"/>
 
@@ -36,7 +36,7 @@
         </LinearLayout>
 
 
-        <com.mottimotti.vodonapor.controllers.RightToolBar
+        <com.mottimotti.vodonapor.controllers.RightPanel
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"/>
 
