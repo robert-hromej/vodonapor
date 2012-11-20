@@ -23,6 +23,8 @@ public abstract class GraphObject extends View {
         setParams(params);
     }
 
+    public abstract GraphObject copy();
+
     public int getLeftX() {
         return params.x;
     }
@@ -31,35 +33,12 @@ public abstract class GraphObject extends View {
         return params.x + params.width;
     }
 
-    public int getTopY() {
-        return params.y;
-    }
-
-    public int getBottomY() {
-        return params.x + params.height;
-    }
-
-    public void moveBy(int x, int y) {
-        params.x = params.x - x;
-        params.y = params.y - y;
-
-        setX(params.x);
-        setY(params.y);
-    }
-
     public void moveTo(int x, int y) {
         params.x = x;
         params.y = y;
 
         setX(params.x);
         setY(params.y);
-    }
-
-    public void resizeBy(int x, int y) {
-        params.width = params.width - x;
-        params.height = params.height - y;
-        refreshLayoutParams();
-        invalidate();
     }
 
     public void resizeTo(int width, int height) {
@@ -110,11 +89,10 @@ public abstract class GraphObject extends View {
         }
     }
 
-    public static interface OnSelectListener {
-        void onSelect(GraphObject object);
-    }
 
-    public static interface OnMoveListener {
+    public static interface Listener {
+        void onSelect(GraphObject object);
+
         void onMove(GraphObject object);
     }
 }

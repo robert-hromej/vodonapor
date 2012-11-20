@@ -5,18 +5,17 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import com.mottimotti.vodonapor.GraphObject.GraphObject;
 import com.mottimotti.vodonapor.R;
 import com.mottimotti.vodonapor.util.LayerPosition;
 
 public class Toolbar extends LinearLayout implements View.OnClickListener {
 
+    private static final float HIDE_ALPHA = 0.4f;
+
     private View copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn;
 
-    private OnChangeLayerPositionListener onChangeLayerPositionListener;
-
-    private OnCopyListener onCopyListener;
-
-    private OnDeleteListener onDeleteListener;
+    private Listener listener;
 
     public Toolbar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -25,92 +24,80 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         if (inflater != null) inflater.inflate(R.layout.toolbar, this);
 
         copyBtn = findViewById(R.id.copyBtn);
-        deleteBtn = findViewById(R.id.deleteBtn);
-
         moveBackBtn = findViewById(R.id.moveBackBtn);
         moveBackwardBtn = findViewById(R.id.moveBackwardsBtn);
         moveForwardBtn = findViewById(R.id.moveForwardsBtn);
         moveFrontBtn = findViewById(R.id.moveFrontBtn);
+        deleteBtn = findViewById(R.id.deleteBtn);
 
-        copyBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onCopyListener.onCopy();
-            }
-        });
-
-        deleteBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onDeleteListener.onDelete();
-            }
-        });
-
+        copyBtn.setOnClickListener(this);
         moveBackBtn.setOnClickListener(this);
         moveBackwardBtn.setOnClickListener(this);
         moveForwardBtn.setOnClickListener(this);
         moveFrontBtn.setOnClickListener(this);
+        deleteBtn.setOnClickListener(this);
+
+        updateButtons();
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
     public void onClick(View view) {
-        LayerPosition layerPosition = null;
-
         switch (view.getId()) {
-            case R.id.moveBackBtn: {
-                layerPosition = LayerPosition.MOVE_BACK;
+            case R.id.moveBackBtn:
+                listener.onChange(LayerPosition.MOVE_BACK);
                 break;
-            }
-            case R.id.moveBackwardsBtn: {
-                layerPosition = LayerPosition.MOVE_BACKWARDS;
+            case R.id.moveBackwardsBtn:
+                listener.onChange(LayerPosition.MOVE_BACKWARDS);
                 break;
-            }
-            case R.id.moveFrontBtn: {
-                layerPosition = LayerPosition.MOVE_FRONT;
+            case R.id.moveFrontBtn:
+                listener.onChange(LayerPosition.MOVE_FRONT);
                 break;
-            }
-            case R.id.moveForwardsBtn: {
-                layerPosition = LayerPosition.MOVE_FORWARDS;
+            case R.id.moveForwardsBtn:
+                listener.onChange(LayerPosition.MOVE_FORWARDS);
                 break;
-            }
+            case R.id.copyBtn:
+                listener.onCopy();
+                break;
+            case R.id.deleteBtn:
+                listener.onDelete();
+                break;
         }
-
-        onChangeLayerPositionListener.onChange(layerPosition);
     }
 
-    public void setOnChangeLayerPositionListener(OnChangeLayerPositionListener onChangeLayerPositionListener) {
-        this.onChangeLayerPositionListener = onChangeLayerPositionListener;
+    public void updateButtons() {
+        View[] views = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn};
+        for (View view : views) view.setAlpha(HIDE_ALPHA);
     }
 
-    public void setOnCopyListener(OnCopyListener onCopyListener) {
-        this.onCopyListener = onCopyListener;
-    }
-
-    public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
-        this.onDeleteListener = onDeleteListener;
-    }
-
-    public void showButtons() {
+    public void updateButtons(GraphObject object) {
         View[] views = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn};
 
-        for (View view : views) view.setAlpha(1f);
+        for (View view : views)
+            view.setAlpha((object == null) ? HIDE_ALPHA : 1f);
     }
 
-    public void hideButtons() {
-        View[] views = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn};
+    public void updateButtons(DocumentPlot plot) {
+        LayerPosition layerPosition = plot.getSelectedLayerPosition();
 
-        for (View view : views) view.setAlpha(0.4f);
+        float alpha1 = (layerPosition == LayerPosition.MOVE_BACK) ? HIDE_ALPHA : 1f;
+        float alpha2 = (layerPosition == LayerPosition.MOVE_FRONT) ? HIDE_ALPHA : 1f;
+
+        moveBackBtn.setAlpha(alpha1);
+        moveBackwardBtn.setAlpha(alpha1);
+
+        moveFrontBtn.setAlpha(alpha2);
+        moveForwardBtn.setAlpha(alpha2);
     }
 
-    public static interface OnChangeLayerPositionListener {
+    public static interface Listener {
         void onChange(LayerPosition layerPosition);
-    }
 
-    public static interface OnCopyListener {
-        public void onCopy();
-    }
+        void onCopy();
 
-    public static interface OnDeleteListener {
-        public void onDelete();
+        void onDelete();
     }
 }

@@ -6,7 +6,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
-import com.mottimotti.vodonapor.GraphObject.*;
+import com.mottimotti.vodonapor.GraphObject.GraphObject;
+import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.R;
 import com.mottimotti.vodonapor.util.LayerPosition;
 import com.mottimotti.vodonapor.util.Magnet;
@@ -22,32 +23,43 @@ public class DocumentPlot extends RelativeLayout {
 
     private List<GraphObject> children;
 
-    private GraphObject.OnSelectListener onSelectListener;
-
-    private GraphObject.OnMoveListener onMoveListener;
+    private GraphObject.Listener listener;
 
     public DocumentPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) inflater.inflate(R.layout.document_plot, this);
+
+        children = new ArrayList<GraphObject>();
     }
 
     public void addGraphObject(GraphObject graphObject) {
-        if (children == null) children = new ArrayList<GraphObject>();
-
         children.add(graphObject);
         addView(graphObject);
+
         graphObject.setOnTouchListener(new ChildOnTouchListener());
     }
 
-    public void changePosition(GraphObject graphObject, LayerPosition layerPosition) {
-        if (layerPosition.change(children, graphObject)) {
+    public void changePosition(LayerPosition layerPosition) {
+        if (layerPosition.change(children, selected)) {
             for (GraphObject child : children) {
                 removeView(child);
                 addView(child);
             }
         }
+    }
+
+    public LayerPosition getSelectedLayerPosition() {
+        int index = children.indexOf(selected);
+
+        if (index == 0) {
+            return LayerPosition.MOVE_BACK;
+        } else if (index + 1 == children.size()) {
+            return LayerPosition.MOVE_FRONT;
+        }
+
+        return null;
     }
 
     @Override
@@ -73,38 +85,17 @@ public class DocumentPlot extends RelativeLayout {
         return true;
     }
 
-    public void setOnSelectListener(GraphObject.OnSelectListener onSelectListener) {
-        this.onSelectListener = onSelectListener;
-    }
-
-    public void setOnMoveListener(GraphObject.OnMoveListener onMoveListener) {
-        this.onMoveListener = onMoveListener;
-    }
-
     public void copySelectedObject() {
         if (selected == null) return;
 
-        GraphParams newParams = selected.params.clone();
-
-        newParams.x = newParams.x + 20;
-        newParams.y = newParams.y + 20;
-
-        GraphObject newObject = null;
-
-        if (selected instanceof BlueTriangle) {
-            newObject = new BlueTriangle(getContext(), newParams);
-        } else if (selected instanceof GreenCircle) {
-            newObject = new GreenCircle(getContext(), newParams);
-        } else if (selected instanceof YellowRect) {
-            newObject = new YellowRect(getContext(), newParams);
-        }
+        GraphObject newObject = selected.copy();
 
         addGraphObject(newObject);
 
         selected.setSelectedState(false);
         selected = newObject;
         selected.setSelectedState(true);
-        onSelectListener.onSelect(selected);
+        listener.onSelect(selected);
     }
 
     public void deleteSelectedObject() {
@@ -113,6 +104,10 @@ public class DocumentPlot extends RelativeLayout {
         children.remove(selected);
         removeView(selected);
         selected = null;
+    }
+
+    public void setListener(GraphObject.Listener listener) {
+        this.listener = listener;
     }
 
     private class ChildOnTouchListener implements View.OnTouchListener {
@@ -133,7 +128,7 @@ public class DocumentPlot extends RelativeLayout {
                 if (selected != null) selected.setSelectedState(false);
                 selected = graph;
                 graph.setSelectedState(true);
-                onSelectListener.onSelect(graph);
+                listener.onSelect(graph);
             }
 
             switch (event.getAction()) {
@@ -143,7 +138,7 @@ public class DocumentPlot extends RelativeLayout {
                     startX = (int) event.getRawX();
                     startY = (int) event.getRawY();
 
-                    originalParams = graph.params.clone();
+                    originalParams = graph.params.copy(0, 0);
 
                     if (graph.getWidth() - (int) event.getX() < 10 && graph.getHeight() - (int) event.getY() < 10) {
                         changeMode = 1;
@@ -163,7 +158,7 @@ public class DocumentPlot extends RelativeLayout {
                         graph.moveTo(magnet.updateX(originalParams.x - x2), originalParams.y - y2);
                     }
 
-                    onMoveListener.onMove(graph);
+                    listener.onMove(graph);
 
                     break;
                 }

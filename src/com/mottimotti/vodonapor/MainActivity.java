@@ -10,7 +10,7 @@ import com.mottimotti.vodonapor.util.LayerPosition;
 
 import java.util.Random;
 
-public class MainActivity extends Activity implements GraphObject.OnSelectListener, GraphObject.OnMoveListener, Toolbar.OnChangeLayerPositionListener, Toolbar.OnCopyListener, Toolbar.OnDeleteListener {
+public class MainActivity extends Activity {
 
     private Toolbar toolbar;
     private InfoBox infoBox;
@@ -25,13 +25,8 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
         infoBox = (InfoBox) findViewById(R.id.infoBox);
         plot = (DocumentPlot) findViewById(R.id.documentPlot);
 
-        plot.setOnSelectListener(this);
-        plot.setOnMoveListener(this);
-
-        toolbar.setOnChangeLayerPositionListener(this);
-        toolbar.setOnCopyListener(this);
-        toolbar.setOnDeleteListener(this);
-        toolbar.hideButtons();
+        plot.setListener(new GraphListener());
+        toolbar.setListener(new ToolbarListener());
 
         fillFakeDocument();
     }
@@ -46,31 +41,39 @@ public class MainActivity extends Activity implements GraphObject.OnSelectListen
         }
     }
 
-    @Override
-    public void onSelect(GraphObject object) {
-        toolbar.showButtons();
-        infoBox.update(object);
+    private class GraphListener implements GraphObject.Listener {
+        @Override
+        public void onSelect(GraphObject object) {
+            toolbar.updateButtons(object);
+            infoBox.update(object);
+            toolbar.updateButtons(plot);
+        }
+
+        @Override
+        public void onMove(GraphObject object) {
+            infoBox.update(object);
+        }
     }
 
-    @Override
-    public void onMove(GraphObject object) {
-        infoBox.update(object);
+    private class ToolbarListener implements Toolbar.Listener {
+        @Override
+        public void onChange(LayerPosition layerPosition) {
+            if (plot.selected == null) return;
+
+            plot.changePosition(layerPosition);
+            toolbar.updateButtons(plot);
+        }
+
+        @Override
+        public void onCopy() {
+            plot.copySelectedObject();
+        }
+
+        @Override
+        public void onDelete() {
+            plot.deleteSelectedObject();
+            toolbar.updateButtons();
+        }
     }
 
-    @Override
-    public void onChange(LayerPosition layerPosition) {
-        if (plot.selected == null) return;
-        plot.changePosition(plot.selected, layerPosition);
-    }
-
-    @Override
-    public void onCopy() {
-        plot.copySelectedObject();
-    }
-
-    @Override
-    public void onDelete() {
-        plot.deleteSelectedObject();
-        toolbar.hideButtons();
-    }
 }

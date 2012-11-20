@@ -16,6 +16,11 @@ public class YellowRect extends GraphObject {
     }
 
     @Override
+    public GraphObject copy() {
+        return new YellowRect(getContext(), params.copy());
+    }
+
+    @Override
     public void onDraw(Canvas canvas) {
         Paint paint = new Paint();
 

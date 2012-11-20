@@ -15,6 +15,10 @@ public class GreenCircle extends GraphObject {
         super(context, params);
     }
 
+    @Override
+    public GraphObject copy() {
+        return new GreenCircle(getContext(), params.copy());
+    }
 
     @Override
     public void onDraw(Canvas canvas) {
