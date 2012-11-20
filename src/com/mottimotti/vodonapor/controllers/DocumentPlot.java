@@ -7,7 +7,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import com.mottimotti.vodonapor.GraphObject.GraphObject;
+import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.R;
+import com.mottimotti.vodonapor.util.LayerPosition;
 import com.mottimotti.vodonapor.util.Magnet;
 
 import java.util.ArrayList;
@@ -41,12 +43,12 @@ public class DocumentPlot extends RelativeLayout {
         graphObject.setOnTouchListener(new ChildOnTouchListener());
     }
 
-    public void changePosition(GraphObject graphObject) {
-        Collections.swap(children, children.indexOf(graphObject), children.size() - 1);
-
-        for (GraphObject child : children) {
-            removeView(child);
-            addView(child);
+    public void changePosition(GraphObject graphObject, LayerPosition layerPosition) {
+        if (layerPosition.change(children, graphObject)) {
+            for (GraphObject child : children) {
+                removeView(child);
+                addView(child);
+            }
         }
     }
 
@@ -82,12 +84,7 @@ public class DocumentPlot extends RelativeLayout {
     }
 
     private class ChildOnTouchListener implements View.OnTouchListener {
-
-        private int originalX;
-        private int originalY;
-
-        private int originalWidth;
-        private int originalHeight;
+        private GraphParams originalParams;
 
         private int startX;
         private int startY;
@@ -114,11 +111,7 @@ public class DocumentPlot extends RelativeLayout {
                     startX = (int) event.getRawX();
                     startY = (int) event.getRawY();
 
-                    originalX = graph.params.x;
-                    originalY = graph.params.y;
-
-                    originalWidth = graph.params.width;
-                    originalHeight = graph.params.height;
+                    originalParams = graph.params.clone();
 
                     if (graph.getWidth() - (int) event.getX() < 10 && graph.getHeight() - (int) event.getY() < 10) {
                         changeMode = 1;
@@ -133,9 +126,9 @@ public class DocumentPlot extends RelativeLayout {
                     int y2 = startY - (int) event.getRawY();
 
                     if (changeMode == 1) {
-                        graph.resizeTo(originalWidth - x2, originalHeight - y2);
+                        graph.resizeTo(originalParams.width - x2, originalParams.height - y2);
                     } else if (changeMode == 2) {
-                        graph.moveTo(magnet.updateX(originalX - x2), originalY - y2);
+                        graph.moveTo(magnet.updateX(originalParams.x - x2), originalParams.y - y2);
                     }
 
                     onMoveListener.onMove(graph);

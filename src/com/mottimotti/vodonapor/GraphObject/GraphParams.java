@@ -16,4 +16,9 @@ public class GraphParams {
         this.width = width;
         this.height = height;
     }
+
+    @Override
+    public GraphParams clone() {
+        return new GraphParams(x, y, width, height);
+    }
 }

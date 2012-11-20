@@ -36,9 +36,27 @@
             android:padding="20dp"/>
 
     <Button
-            android:id="@+id/leftToolBarBtn"
+            android:id="@+id/moveBackBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Left tool bar"/>
+            android:background="@drawable/shape_move_back"/>
+
+    <Button
+            android:id="@+id/moveBackwardsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_move_backwards"/>
+
+    <Button
+            android:id="@+id/moveForwardsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_move_forwards"/>
+
+    <Button
+            android:id="@+id/moveFrontBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_move_front"/>
 
 </LinearLayout>
