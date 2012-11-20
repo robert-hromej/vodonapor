@@ -27,83 +27,55 @@ public class Magnet {
         }
     }
 
-    public int updateX(int originalX) {
-        Integer neighborhood = null;
-        Integer minD = null;
-        Integer d;
-
-        for (Integer x : listX) {
-
-            d = Math.abs(x - currentObject.getLeftX());
-            if (minD == null || minD > d) {
-                minD = d;
-                neighborhood = x;
-            }
-
-            d = Math.abs(x - currentObject.getRightX());
-            if (minD == null || minD > d) {
-                minD = d;
-                neighborhood = x - currentObject.params.width;
-            }
-        }
-
-        return (Math.abs(originalX - neighborhood) < 10) ? neighborhood : originalX;
+    public int updateX(int x) {
+        return updateCoordinate(x, listX, currentObject.getWidth());
     }
 
-    public int updateY(int originalY) {
-        Integer neighborhood = null;
-        Integer minD = null;
-        Integer d;
-
-        for (Integer y : listY) {
-
-            d = Math.abs(y - currentObject.getTopY());
-            if (minD == null || minD > d) {
-                minD = d;
-                neighborhood = y;
-            }
-
-            d = Math.abs(y - currentObject.getBottomY());
-            if (minD == null || minD > d) {
-                minD = d;
-                neighborhood = y - currentObject.params.height;
-            }
-        }
-
-        return (Math.abs(originalY - neighborhood) < 10) ? neighborhood : originalY;
+    public int updateY(int y) {
+        return updateCoordinate(y, listY, currentObject.getHeight());
     }
 
-    public int updateWidth(int originalWidth) {
-        Integer neighborhood = null;
-        Integer minD = null;
-        Integer d;
-
-        for (Integer x : listX) {
-
-            d = Math.abs(x - currentObject.getLeftX() - originalWidth);
-            if (minD == null || minD > d) {
-                minD = d;
-                neighborhood = x - currentObject.getLeftX();
-            }
-        }
-
-        return (Math.abs(originalWidth - neighborhood) < 10) ? neighborhood : originalWidth;
+    public int updateWidth(int width) {
+        return updateSize(width, listX, currentObject.getLeftX());
     }
 
-    public int updateHeight(int originalHeight) {
-        Integer neighborhood = null;
-        Integer minD = null;
-        Integer d;
+    public int updateHeight(int height) {
+        return updateSize(height, listY, currentObject.getTopY());
+    }
 
-        for (Integer y : listY) {
+    private int updateSize(int size, HashSet<Integer> list, int start) {
+        final int closest = closest(start + size, list);
 
-            d = Math.abs(y - currentObject.getTopY() - originalHeight);
-            if (minD == null || minD > d) {
-                minD = d;
-                neighborhood = y - currentObject.getTopY();
+        final int diff = Math.abs(closest - (start + size));
+
+        return (diff < 10) ? closest - start : size;
+    }
+
+    private int updateCoordinate(int original, HashSet<Integer> list, int secondK) {
+        final int firstClosest = closest(original, list);
+        final int secondClosest = closest(original + secondK, list);
+
+        final int firstDiff = Math.abs(firstClosest - original);
+        final int secondDiff = Math.abs(secondClosest - original - secondK);
+
+        if (Math.min(firstDiff, secondDiff) > 10) return original;
+
+        return (firstDiff < secondDiff) ? firstClosest : secondClosest - secondK;
+    }
+
+    private int closest(int of, HashSet<Integer> in) {
+        int min = Integer.MAX_VALUE;
+        int closest = of;
+
+        for (int v : in) {
+            final int diff = Math.abs(v - of);
+
+            if (diff < min) {
+                min = diff;
+                closest = v;
             }
         }
 
-        return (Math.abs(originalHeight - neighborhood) < 10) ? neighborhood : originalHeight;
+        return closest;
     }
 }
