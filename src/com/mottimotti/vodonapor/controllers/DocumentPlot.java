@@ -1,19 +1,22 @@
-package com.mottimotti.vodonapor.ui;
+package com.mottimotti.vodonapor.controllers;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import com.mottimotti.vodonapor.GraphObject.GraphObject;
+import com.mottimotti.vodonapor.R;
+import com.mottimotti.vodonapor.util.Magnet;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DocumentPlot extends RelativeLayout {
 
-    private int currentX;
-    private int currentY;
+    private int currentX, currentY;
 
     private GraphObject selected;
 
@@ -21,8 +24,13 @@ public class DocumentPlot extends RelativeLayout {
 
     private GraphObject.OnSelectListener onSelectListener;
 
+    private GraphObject.OnMoveListener onMoveListener;
+
     public DocumentPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (inflater != null) inflater.inflate(R.layout.document_plot, this);
     }
 
     public void addGraphObject(GraphObject graphObject) {
@@ -31,6 +39,15 @@ public class DocumentPlot extends RelativeLayout {
         children.add(graphObject);
         addView(graphObject);
         graphObject.setOnTouchListener(new ChildOnTouchListener());
+    }
+
+    public void changePosition(GraphObject graphObject) {
+        Collections.swap(children, children.indexOf(graphObject), children.size() - 1);
+
+        for (GraphObject child : children) {
+            removeView(child);
+            addView(child);
+        }
     }
 
     @Override
@@ -60,10 +77,24 @@ public class DocumentPlot extends RelativeLayout {
         this.onSelectListener = onSelectListener;
     }
 
+    public void setOnMoveListener(GraphObject.OnMoveListener onMoveListener) {
+        this.onMoveListener = onMoveListener;
+    }
+
     private class ChildOnTouchListener implements View.OnTouchListener {
 
-        private int currentX;
-        private int currentY;
+        private int originalX;
+        private int originalY;
+
+        private int originalWidth;
+        private int originalHeight;
+
+        private int startX;
+        private int startY;
+
+        private int changeMode;
+
+        private Magnet magnet;
 
         @Override
         public boolean onTouch(View view, MotionEvent event) {
@@ -78,22 +109,41 @@ public class DocumentPlot extends RelativeLayout {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
-                    currentX = (int) event.getRawX();
-                    currentY = (int) event.getRawY();
+                    magnet = new Magnet(graph, children);
+
+                    startX = (int) event.getRawX();
+                    startY = (int) event.getRawY();
+
+                    originalX = graph.params.x;
+                    originalY = graph.params.y;
+
+                    originalWidth = graph.params.width;
+                    originalHeight = graph.params.height;
+
+                    if (graph.getWidth() - (int) event.getX() < 10 && graph.getHeight() - (int) event.getY() < 10) {
+                        changeMode = 1;
+                    } else {
+                        changeMode = 2;
+                    }
+
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
-                    int x2 = (int) event.getRawX();
-                    int y2 = (int) event.getRawY();
+                    int x2 = startX - (int) event.getRawX();
+                    int y2 = startY - (int) event.getRawY();
 
-                    graph.moveBy(currentX - x2, currentY - y2);
-                    onSelectListener.onMove(graph);
+                    if (changeMode == 1) {
+                        graph.resizeTo(originalWidth - x2, originalHeight - y2);
+                    } else if (changeMode == 2) {
+                        graph.moveTo(magnet.updateX(originalX - x2), originalY - y2);
+                    }
 
-                    currentX = x2;
-                    currentY = y2;
+                    onMoveListener.onMove(graph);
+
                     break;
                 }
                 case MotionEvent.ACTION_UP: {
+                    changeMode = 0;
                     break;
                 }
             }

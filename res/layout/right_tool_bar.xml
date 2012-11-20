@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mottimotti.vodonapor.ui.RightToolBar
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/rightToolBar"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:background="#987632"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:background="#987632">
+
+    <LinearLayout
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:background="#744734"/>
+
+    <LinearLayout
+            android:id="@+id/objectList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#645524"/>
+
+</LinearLayout>

@@ -9,11 +9,13 @@ import com.mottimotti.vodonapor.GraphObject.GraphObject;
 import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.GraphObject.Nasos;
 import com.mottimotti.vodonapor.GraphObject.Tryba;
-import com.mottimotti.vodonapor.ui.DocumentPlot;
+import com.mottimotti.vodonapor.controllers.DocumentPlot;
 
 import java.util.Random;
 
-public class MainActivity extends Activity implements View.OnClickListener, GraphObject.OnSelectListener {
+public class MainActivity extends Activity implements GraphObject.OnSelectListener, View.OnClickListener, GraphObject.OnMoveListener {
+
+    private GraphObject selectedObject;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,9 +26,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Grap
 
         Random r = new Random();
 
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < 20; i++) {
             plot.addGraphObject(new Nasos(this, new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10)));
+            plot.addGraphObject(new Tryba(this, new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10)));
         }
+
 
 //        plot.addGraphObject(new Nasos(this, new GraphParams(-50, 50, 100, 100)));
 //
@@ -34,25 +38,20 @@ public class MainActivity extends Activity implements View.OnClickListener, Grap
 //
 //        plot.addGraphObject(new Tryba(this, new GraphParams(130, 190, 200, 200)));
 
-        Button leftBtn = (Button) findViewById(R.id.leftToolBarBtn);
-        leftBtn.setOnClickListener(this);
-
         plot.setOnSelectListener(this);
-    }
+        plot.setOnMoveListener(this);
 
-    @Override
-    public void onClick(View view) {
-        View leftView = findViewById(R.id.leftToolBar);
-        if (leftView.getVisibility() == View.GONE) {
-            leftView.setVisibility(View.VISIBLE);
-        } else {
-            leftView.setVisibility(View.GONE);
-        }
+        Button btn = (Button) findViewById(R.id.leftToolBarBtn);
+        btn.setOnClickListener(this);
+
     }
 
     @Override
     public void onSelect(GraphObject object) {
-        TextView typeLabel = (TextView) findViewById(R.id.objectTypeLabel);
+
+        selectedObject = object;
+
+        TextView typeLabel = (TextView) findViewById(R.id.statusLabel);
         TextView xLabel = (TextView) findViewById(R.id.objectXLabel);
         TextView yLabel = (TextView) findViewById(R.id.objectYLabel);
         TextView widthLabel = (TextView) findViewById(R.id.objectWidthLabel);
@@ -68,7 +67,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Grap
 
     @Override
     public void onMove(GraphObject object) {
-        TextView typeLabel = (TextView) findViewById(R.id.objectTypeLabel);
+        TextView typeLabel = (TextView) findViewById(R.id.statusLabel);
         TextView xLabel = (TextView) findViewById(R.id.objectXLabel);
         TextView yLabel = (TextView) findViewById(R.id.objectYLabel);
         TextView widthLabel = (TextView) findViewById(R.id.objectWidthLabel);
@@ -80,5 +79,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Grap
 
         widthLabel.setText("width: " + object.getWidth());
         heightLabel.setText("height: " + object.getHeight());
+    }
+
+    @Override
+    public void onClick(View view) {
+        DocumentPlot plot = (DocumentPlot) findViewById(R.id.documentPlot);
+
+        plot.changePosition(selectedObject);
     }
 }

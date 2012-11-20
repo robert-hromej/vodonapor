@@ -18,12 +18,50 @@ public abstract class GraphObject extends View {
         setParams(new GraphParams(0, 0, 100, 100));
     }
 
+    public int getLeftX() {
+        return params.x;
+    }
+
+    public int getRightX() {
+        return params.x + params.width;
+    }
+
+    public int getTopY() {
+        return params.y;
+    }
+
+    public int getBottomY() {
+        return params.x + params.height;
+    }
+
     public void moveBy(int x, int y) {
         params.x = params.x - x;
         params.y = params.y - y;
 
         setX(params.x);
         setY(params.y);
+    }
+
+    public void moveTo(int x, int y) {
+        params.x = x;
+        params.y = y;
+
+        setX(params.x);
+        setY(params.y);
+    }
+
+    public void resizeBy(int x, int y) {
+        params.width = params.width - x;
+        params.height = params.height - y;
+        refreshLayoutParams();
+        invalidate();
+    }
+
+    public void resizeTo(int width, int height) {
+        params.width = width;
+        params.height = height;
+        refreshLayoutParams();
+        invalidate();
     }
 
     public GraphObject(Context context, GraphParams params) {
@@ -60,17 +98,23 @@ public abstract class GraphObject extends View {
 
         if (getSelectedState()) {
             Paint paint = new Paint();
+
             paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(5);
             paint.setAntiAlias(true);
             canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
+
+            paint.setStrokeWidth(10);
+            canvas.drawRect(getWidth() - 10, getHeight() - 10, getWidth(), getHeight(), paint);
         }
     }
 
     public static interface OnSelectListener {
         void onSelect(GraphObject object);
+    }
 
+    public static interface OnMoveListener {
         void onMove(GraphObject object);
     }
 }
