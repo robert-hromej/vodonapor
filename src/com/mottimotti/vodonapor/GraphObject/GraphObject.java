@@ -11,7 +11,7 @@ import com.mottimotti.vodonapor.util.Magnet;
 
 import java.util.List;
 
-public abstract class GraphObject extends View {
+public class GraphObject extends View {
 
     public GraphParams params;
 
@@ -19,17 +19,20 @@ public abstract class GraphObject extends View {
 
     private boolean selectedState = false;
 
-    public GraphObject(Context context) {
-        super(context);
-        setParams(new GraphParams(0, 0, 100, 100));
-    }
+    private GraphType type = GraphType.EMPTY;
 
-    public GraphObject(Context context, GraphParams params) {
+    public GraphObject(Context context, GraphParams params, GraphType type) {
         super(context);
+
+        GraphType.EMPTY.name();
+
+        setType(type);
         setParams(params);
     }
 
-    public abstract GraphObject copy();
+    public GraphObject copy() {
+        return new GraphObject(getContext(), params.copy(0, 0), getType());
+    }
 
     public int getLeftX() {
         return params.x;
@@ -48,7 +51,7 @@ public abstract class GraphObject extends View {
     }
 
     public void moveTo(int x, int y) {
-        if (Toolbar.getMagnetMode() == Toolbar.MagnetMode.ON) {
+        if (magnet != null && Toolbar.getMagnetMode() == Toolbar.MagnetMode.ON) {
             x = magnet.updateX(x);
             y = magnet.updateX(y);
         }
@@ -61,7 +64,7 @@ public abstract class GraphObject extends View {
     }
 
     public void resizeTo(int width, int height) {
-        if (Toolbar.getMagnetMode() == Toolbar.MagnetMode.ON) {
+        if (magnet != null && Toolbar.getMagnetMode() == Toolbar.MagnetMode.ON) {
             width = magnet.updateWidth(width);
             height = magnet.updateHeight(height);
         }
@@ -99,6 +102,8 @@ public abstract class GraphObject extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        type.onDrawObject(canvas, this);
+
         if (getSelectedState()) {
             Paint paint = new Paint();
 
@@ -118,6 +123,14 @@ public abstract class GraphObject extends View {
 
     public void updateMagnet(List<GraphObject> objects) {
         this.magnet = new Magnet(this, objects);
+    }
+
+    public GraphType getType() {
+        return type;
+    }
+
+    public void setType(GraphType type) {
+        this.type = type;
     }
 
     public static interface Listener {

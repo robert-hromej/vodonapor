@@ -37,6 +37,7 @@
 
 
         <com.mottimotti.vodonapor.controllers.RightPanel
+                android:id="@+id/rightPanel"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"/>
 

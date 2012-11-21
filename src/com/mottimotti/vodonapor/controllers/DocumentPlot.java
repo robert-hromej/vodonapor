@@ -41,6 +41,15 @@ public class DocumentPlot extends RelativeLayout {
         graphObject.setOnTouchListener(new ChildOnTouchListener());
     }
 
+    public void addGraphObjectToCenter(GraphObject object) {
+        final int x = getWidth() / 2 + getScrollX() - object.params.width / 2;
+        final int y = getHeight() / 2 + getScrollY() - object.params.height / 2;
+
+        object.moveTo(x, y);
+
+        addGraphObject(object);
+    }
+
     public void changePosition(LayerPosition layerPosition) {
         if (layerPosition.change(children, selected)) {
             for (GraphObject child : children) {
@@ -85,6 +94,13 @@ public class DocumentPlot extends RelativeLayout {
         return true;
     }
 
+    public void changeSelected(GraphObject selected) {
+        if (this.selected != null) this.selected.setSelectedState(false);
+        this.selected = selected;
+        this.selected.setSelectedState(true);
+        listener.onSelect(selected);
+    }
+
     public void copySelectedObject() {
         if (selected == null) return;
 
@@ -92,10 +108,7 @@ public class DocumentPlot extends RelativeLayout {
 
         addGraphObject(newObject);
 
-        selected.setSelectedState(false);
-        selected = newObject;
-        selected.setSelectedState(true);
-        listener.onSelect(selected);
+        changeSelected(newObject);
     }
 
     public void deleteSelectedObject() {
@@ -122,12 +135,7 @@ public class DocumentPlot extends RelativeLayout {
         public boolean onTouch(View view, MotionEvent event) {
             GraphObject graph = (GraphObject) view;
 
-            if (selected != graph) {
-                if (selected != null) selected.setSelectedState(false);
-                selected = graph;
-                graph.setSelectedState(true);
-                listener.onSelect(graph);
-            }
+            if (selected != graph) changeSelected(graph);
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
