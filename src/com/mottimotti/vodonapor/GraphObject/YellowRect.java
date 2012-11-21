@@ -7,10 +7,6 @@ import android.graphics.Paint;
 
 public class YellowRect extends GraphObject {
 
-    public YellowRect(Context context) {
-        super(context);
-    }
-
     public YellowRect(Context context, GraphParams params) {
         super(context, params);
     }

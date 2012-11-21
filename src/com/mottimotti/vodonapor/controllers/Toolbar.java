@@ -13,7 +13,9 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
 
     private static final float HIDE_ALPHA = 0.4f;
 
-    private View copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn;
+    private static TouchMode touchMode;
+
+    private View copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn;
 
     private Listener listener;
 
@@ -29,6 +31,8 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         moveForwardBtn = findViewById(R.id.moveForwardsBtn);
         moveFrontBtn = findViewById(R.id.moveFrontBtn);
         deleteBtn = findViewById(R.id.deleteBtn);
+        moveBtn = findViewById(R.id.moveBtn);
+        resizeBtn = findViewById(R.id.resizeBtn);
 
         copyBtn.setOnClickListener(this);
         moveBackBtn.setOnClickListener(this);
@@ -36,8 +40,11 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         moveForwardBtn.setOnClickListener(this);
         moveFrontBtn.setOnClickListener(this);
         deleteBtn.setOnClickListener(this);
+        moveBtn.setOnClickListener(this);
+        resizeBtn.setOnClickListener(this);
 
         updateButtons();
+        setTouchMode(TouchMode.MOVE);
     }
 
     public void setListener(Listener listener) {
@@ -65,7 +72,24 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
             case R.id.deleteBtn:
                 listener.onDelete();
                 break;
+            case R.id.moveBtn:
+                setTouchMode(TouchMode.MOVE);
+                break;
+            case R.id.resizeBtn:
+                setTouchMode(TouchMode.RESIZE);
+                break;
         }
+    }
+
+    public static TouchMode getTouchMode() {
+        return touchMode;
+    }
+
+    public void setTouchMode(TouchMode touchMode) {
+        moveBtn.setAlpha((touchMode == TouchMode.MOVE) ? 1f : HIDE_ALPHA);
+        resizeBtn.setAlpha((touchMode == TouchMode.RESIZE) ? 1f : HIDE_ALPHA);
+
+        Toolbar.touchMode = touchMode;
     }
 
     public void updateButtons() {
@@ -99,5 +123,10 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         void onCopy();
 
         void onDelete();
+    }
+
+    public static enum TouchMode {
+        MOVE,
+        RESIZE;
     }
 }

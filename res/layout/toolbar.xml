@@ -65,4 +65,16 @@
             android:background="@drawable/delete"
             android:layout_margin="5dp"/>
 
+    <Button android:id="@+id/moveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/move"
+            android:layout_margin="5dp"/>
+
+    <Button android:id="@+id/resizeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/resize"
+            android:layout_margin="5dp"/>
+
 </LinearLayout>

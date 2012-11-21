@@ -116,8 +116,6 @@ public class DocumentPlot extends RelativeLayout {
         private int startX;
         private int startY;
 
-        private int changeMode;
-
         private Magnet magnet;
 
         @Override
@@ -140,30 +138,23 @@ public class DocumentPlot extends RelativeLayout {
 
                     originalParams = graph.params.copy(0, 0);
 
-                    if (graph.getWidth() - (int) event.getX() < 10 && graph.getHeight() - (int) event.getY() < 10) {
-                        changeMode = 1;
-                    } else {
-                        changeMode = 2;
-                    }
-
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
                     int x2 = startX - (int) event.getRawX();
                     int y2 = startY - (int) event.getRawY();
 
-                    if (changeMode == 1) {
+                    if (Toolbar.getTouchMode() == Toolbar.TouchMode.RESIZE)
                         graph.resizeTo(magnet.updateWidth(originalParams.width - x2), magnet.updateHeight(originalParams.height - y2));
-                    } else if (changeMode == 2) {
+
+                    if (Toolbar.getTouchMode() == Toolbar.TouchMode.MOVE)
                         graph.moveTo(magnet.updateX(originalParams.x - x2), magnet.updateY(originalParams.y - y2));
-                    }
 
                     listener.onMove(graph);
 
                     break;
                 }
                 case MotionEvent.ACTION_UP: {
-                    changeMode = 0;
                     break;
                 }
             }

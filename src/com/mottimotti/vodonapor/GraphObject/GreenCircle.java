@@ -7,10 +7,6 @@ import android.graphics.Paint;
 
 public class GreenCircle extends GraphObject {
 
-    public GreenCircle(Context context) {
-        super(context);
-    }
-
     public GreenCircle(Context context, GraphParams params) {
         super(context, params);
     }

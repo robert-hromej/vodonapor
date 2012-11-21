@@ -8,10 +8,6 @@ import android.graphics.Path;
 
 public class BlueTriangle extends GraphObject {
 
-    public BlueTriangle(Context context) {
-        super(context);
-    }
-
     public BlueTriangle(Context context, GraphParams params) {
         super(context, params);
     }

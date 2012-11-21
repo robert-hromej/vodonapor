@@ -88,15 +88,17 @@ public abstract class GraphObject extends View {
 
             paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(5);
+            paint.setStrokeWidth(3);
             paint.setAntiAlias(true);
             canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
 
-            paint.setStrokeWidth(10);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawRect(0, 0, 10, 10, paint);
+            canvas.drawRect(getWidth() - 10, 0, getWidth(), 10, paint);
+            canvas.drawRect(0, getHeight() - 10, 10, getHeight(), paint);
             canvas.drawRect(getWidth() - 10, getHeight() - 10, getWidth(), getHeight(), paint);
         }
     }
-
 
     public static interface Listener {
         void onSelect(GraphObject object);
