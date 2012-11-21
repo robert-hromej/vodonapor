@@ -15,7 +15,9 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
 
     private static TouchMode touchMode;
 
-    private View copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn;
+    private static MagnetMode magnetMode;
+
+    private View copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn, magnetBtn;
 
     private Listener listener;
 
@@ -33,15 +35,11 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         deleteBtn = findViewById(R.id.deleteBtn);
         moveBtn = findViewById(R.id.moveBtn);
         resizeBtn = findViewById(R.id.resizeBtn);
+        magnetBtn = findViewById(R.id.magnetBtn);
 
-        copyBtn.setOnClickListener(this);
-        moveBackBtn.setOnClickListener(this);
-        moveBackwardBtn.setOnClickListener(this);
-        moveForwardBtn.setOnClickListener(this);
-        moveFrontBtn.setOnClickListener(this);
-        deleteBtn.setOnClickListener(this);
-        moveBtn.setOnClickListener(this);
-        resizeBtn.setOnClickListener(this);
+        View[] allButtons = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn, magnetBtn};
+
+        for (View button : allButtons) button.setOnClickListener(this);
 
         updateButtons();
         setTouchMode(TouchMode.MOVE);
@@ -78,7 +76,21 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
             case R.id.resizeBtn:
                 setTouchMode(TouchMode.RESIZE);
                 break;
+            case R.id.magnetBtn:
+                changeMagnetMode();
+                break;
         }
+    }
+
+    public static MagnetMode getMagnetMode() {
+        if (magnetMode == null) magnetMode = MagnetMode.ON;
+
+        return magnetMode;
+    }
+
+    public void changeMagnetMode() {
+        magnetMode = (getMagnetMode() == MagnetMode.ON) ? MagnetMode.OFF : MagnetMode.ON;
+        magnetBtn.setAlpha((getMagnetMode() == MagnetMode.ON) ? 1f : HIDE_ALPHA);
     }
 
     public static TouchMode getTouchMode() {
@@ -127,6 +139,10 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
 
     public static enum TouchMode {
         MOVE,
-        RESIZE;
+        RESIZE
+    }
+
+    public static enum MagnetMode {
+        ON, OFF
     }
 }

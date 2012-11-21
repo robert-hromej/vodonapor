@@ -2,7 +2,6 @@ package com.mottimotti.vodonapor.util;
 
 import com.mottimotti.vodonapor.GraphObject.GraphObject;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 

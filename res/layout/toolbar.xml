@@ -77,4 +77,10 @@
             android:background="@drawable/resize"
             android:layout_margin="5dp"/>
 
+    <Button android:id="@+id/magnetBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/magnet"
+            android:layout_margin="5dp"/>
+
 </LinearLayout>

@@ -131,7 +131,7 @@ public class DocumentPlot extends RelativeLayout {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
-                    magnet = new Magnet(graph, children);
+                    graph.updateMagnet(children);
 
                     startX = (int) event.getRawX();
                     startY = (int) event.getRawY();
@@ -145,10 +145,10 @@ public class DocumentPlot extends RelativeLayout {
                     int y2 = startY - (int) event.getRawY();
 
                     if (Toolbar.getTouchMode() == Toolbar.TouchMode.RESIZE)
-                        graph.resizeTo(magnet.updateWidth(originalParams.width - x2), magnet.updateHeight(originalParams.height - y2));
+                        graph.resizeTo(originalParams.width - x2, originalParams.height - y2);
 
                     if (Toolbar.getTouchMode() == Toolbar.TouchMode.MOVE)
-                        graph.moveTo(magnet.updateX(originalParams.x - x2), magnet.updateY(originalParams.y - y2));
+                        graph.moveTo(originalParams.x - x2, originalParams.y - y2);
 
                     listener.onMove(graph);
 

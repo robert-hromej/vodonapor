@@ -6,10 +6,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
 import android.widget.RelativeLayout;
+import com.mottimotti.vodonapor.controllers.Toolbar;
+import com.mottimotti.vodonapor.util.Magnet;
+
+import java.util.List;
 
 public abstract class GraphObject extends View {
 
     public GraphParams params;
+
+    private Magnet magnet;
 
     private boolean selectedState = false;
 
@@ -42,6 +48,11 @@ public abstract class GraphObject extends View {
     }
 
     public void moveTo(int x, int y) {
+        if (Toolbar.getMagnetMode() == Toolbar.MagnetMode.ON) {
+            x = magnet.updateX(x);
+            y = magnet.updateX(y);
+        }
+
         params.x = x;
         params.y = y;
 
@@ -50,6 +61,11 @@ public abstract class GraphObject extends View {
     }
 
     public void resizeTo(int width, int height) {
+        if (Toolbar.getMagnetMode() == Toolbar.MagnetMode.ON) {
+            width = magnet.updateWidth(width);
+            height = magnet.updateHeight(height);
+        }
+
         params.width = Math.max(10, width);
         params.height = Math.max(10, height);
         refreshLayoutParams();
@@ -98,6 +114,10 @@ public abstract class GraphObject extends View {
             canvas.drawRect(0, getHeight() - 10, 10, getHeight(), paint);
             canvas.drawRect(getWidth() - 10, getHeight() - 10, getWidth(), getHeight(), paint);
         }
+    }
+
+    public void updateMagnet(List<GraphObject> objects) {
+        this.magnet = new Magnet(this, objects);
     }
 
     public static interface Listener {
