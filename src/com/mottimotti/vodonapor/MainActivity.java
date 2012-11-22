@@ -3,15 +3,16 @@ package com.mottimotti.vodonapor;
 import android.app.Activity;
 import android.os.Bundle;
 import com.mottimotti.vodonapor.GraphObject.GraphObject;
-import com.mottimotti.vodonapor.GraphObject.GraphParams;
-import com.mottimotti.vodonapor.GraphObject.GraphType;
 import com.mottimotti.vodonapor.controllers.DocumentPlot;
 import com.mottimotti.vodonapor.controllers.InfoBox;
 import com.mottimotti.vodonapor.controllers.RightPanel;
 import com.mottimotti.vodonapor.controllers.Toolbar;
+import com.mottimotti.vodonapor.util.DocumentManager;
 import com.mottimotti.vodonapor.util.LayerPosition;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.Random;
+import java.io.IOException;
 
 public class MainActivity extends Activity implements RightPanel.OnAddListener {
 
@@ -19,6 +20,8 @@ public class MainActivity extends Activity implements RightPanel.OnAddListener {
     private InfoBox infoBox;
     private DocumentPlot plot;
     private RightPanel rightPanel;
+
+    private DocumentManager documentManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,29 +38,14 @@ public class MainActivity extends Activity implements RightPanel.OnAddListener {
         rightPanel.setDocumentPlot(plot);
         rightPanel.setOnAddListener(this);
 
-        fillFakeDocument();
-    }
-
-    private void fillFakeDocument() {
-        Random r = new Random();
-        GraphParams params;
-
-        for (int i = 0; i < 5; i++) {
-            params = new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10);
-            plot.addGraphObject(new GraphObject(this, params, GraphType.BlueTriangle));
-
-            params = new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10);
-            plot.addGraphObject(new GraphObject(this, params, GraphType.YellowRect));
-
-            params = new GraphParams(r.nextInt(15) * 50, r.nextInt(15) * 50, r.nextInt(15) * 10, r.nextInt(15) * 10);
-            plot.addGraphObject(new GraphObject(this, params, GraphType.GreenCircle));
-        }
+        documentManager = new DocumentManager(getCacheDir().getParent() + "/document.json");
     }
 
     @Override
     public void onAdd(GraphObject graphObject) {
         plot.addGraphObjectToCenter(graphObject);
         plot.changeSelected(graphObject);
+        plot.listener.onAdd();
     }
 
     private class GraphListener implements GraphObject.Listener {
@@ -71,6 +59,42 @@ public class MainActivity extends Activity implements RightPanel.OnAddListener {
         @Override
         public void onMove(GraphObject object) {
             infoBox.update(object);
+        }
+
+        @Override
+        public void onAdd() {
+            try {
+                documentManager.remember(plot.toJson());
+            } catch (JSONException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        @Override
+        public void onRemove() {
+            try {
+                documentManager.remember(plot.toJson());
+            } catch (JSONException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        @Override
+        public void onResize() {
+            try {
+                documentManager.remember(plot.toJson());
+            } catch (JSONException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        @Override
+        public void onCompleteMove() {
+            try {
+                documentManager.remember(plot.toJson());
+            } catch (JSONException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
     }
 
@@ -92,6 +116,49 @@ public class MainActivity extends Activity implements RightPanel.OnAddListener {
         public void onDelete() {
             plot.deleteSelectedObject();
             toolbar.updateButtons();
+        }
+
+        @Override
+        public void onSave() {
+            try {
+                documentManager.remember(plot.toJson());
+                documentManager.save();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onOpen() {
+            try {
+                JSONObject json = documentManager.open();
+                if (json != null) plot.load(json);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onRedo() {
+            try {
+                plot.load(documentManager.redo());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onUndo() {
+            try {
+                JSONObject json = documentManager.undo();
+                if (json != null) plot.load(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

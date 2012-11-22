@@ -18,7 +18,12 @@ public class InfoBox extends LinearLayout {
 
     public void update(GraphObject object) {
         TextView textView = (TextView) findViewById(R.id.infoTextView);
-        textView.setText(object.getClass().getSimpleName() + "(" + object.getX() + ", " + object.getY() + ", "
-                + object.getWidth() + ", " + object.getHeight() + ")");
+
+        if (object == null) {
+            textView.setText(null);
+        } else {
+            textView.setText(object.getType().name() + "(" + object.getX() + ", " + object.getY() + ", "
+                    + object.getWidth() + ", " + object.getHeight() + ")");
+        }
     }
 }

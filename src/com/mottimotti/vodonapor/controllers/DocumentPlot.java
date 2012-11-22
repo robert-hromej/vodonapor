@@ -11,6 +11,9 @@ import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.R;
 import com.mottimotti.vodonapor.util.LayerPosition;
 import com.mottimotti.vodonapor.util.Magnet;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +26,7 @@ public class DocumentPlot extends RelativeLayout {
 
     private List<GraphObject> children;
 
-    private GraphObject.Listener listener;
+    public GraphObject.Listener listener;
 
     public DocumentPlot(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -69,6 +72,32 @@ public class DocumentPlot extends RelativeLayout {
         }
 
         return null;
+    }
+
+    public void load(JSONObject json) throws JSONException {
+        scrollTo(0, 0);
+        listener.onSelect(null);
+
+        removeAllViews();
+
+        children.clear();
+
+        JSONArray array = json.getJSONArray("GraphObjects");
+
+        for (int i = 0; i < array.length(); i++) {
+            addGraphObject(GraphObject.parse(getContext(), array.getJSONObject(i)));
+        }
+
+    }
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        JSONArray jsonArray = new JSONArray();
+        for (GraphObject child : children) jsonArray.put(child.toJson());
+        json.put("GraphObjects", jsonArray);
+
+        return json;
     }
 
     @Override
@@ -117,6 +146,8 @@ public class DocumentPlot extends RelativeLayout {
         children.remove(selected);
         removeView(selected);
         selected = null;
+
+        listener.onRemove();
     }
 
     public void setListener(GraphObject.Listener listener) {
@@ -163,6 +194,12 @@ public class DocumentPlot extends RelativeLayout {
                     break;
                 }
                 case MotionEvent.ACTION_UP: {
+                    if (Toolbar.getTouchMode() == Toolbar.TouchMode.RESIZE) {
+                        listener.onResize();
+                    } else {
+                        listener.onCompleteMove();
+                    }
+
                     break;
                 }
             }

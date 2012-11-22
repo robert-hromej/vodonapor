@@ -17,7 +17,7 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
 
     private static MagnetMode magnetMode;
 
-    private View copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn, magnetBtn;
+    private View openBtn, saveBtn, redoBtn, undoBtn, copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn, magnetBtn;
 
     private Listener listener;
 
@@ -27,6 +27,10 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (inflater != null) inflater.inflate(R.layout.toolbar, this);
 
+        saveBtn = findViewById(R.id.saveBtn);
+        openBtn = findViewById(R.id.openBtn);
+        redoBtn = findViewById(R.id.redoBtn);
+        undoBtn = findViewById(R.id.undoBtn);
         copyBtn = findViewById(R.id.copyBtn);
         moveBackBtn = findViewById(R.id.moveBackBtn);
         moveBackwardBtn = findViewById(R.id.moveBackwardsBtn);
@@ -37,7 +41,7 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         resizeBtn = findViewById(R.id.resizeBtn);
         magnetBtn = findViewById(R.id.magnetBtn);
 
-        View[] allButtons = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn, magnetBtn};
+        View[] allButtons = {openBtn, saveBtn, redoBtn, undoBtn, copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn, moveBtn, resizeBtn, magnetBtn};
 
         for (View button : allButtons) button.setOnClickListener(this);
 
@@ -52,6 +56,18 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.saveBtn:
+                listener.onSave();
+                break;
+            case R.id.openBtn:
+                listener.onOpen();
+                break;
+            case R.id.redoBtn:
+                listener.onRedo();
+                break;
+            case R.id.undoBtn:
+                listener.onUndo();
+                break;
             case R.id.moveBackBtn:
                 listener.onChange(LayerPosition.MOVE_BACK);
                 break;
@@ -135,6 +151,14 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         void onCopy();
 
         void onDelete();
+
+        void onSave();
+
+        void onOpen();
+
+        void onRedo();
+
+        void onUndo();
     }
 
     public static enum TouchMode {

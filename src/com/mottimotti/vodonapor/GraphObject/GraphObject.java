@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import com.mottimotti.vodonapor.controllers.Toolbar;
 import com.mottimotti.vodonapor.util.Magnet;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class GraphObject extends View {
     }
 
     public GraphObject copy() {
-        return new GraphObject(getContext(), params.copy(0, 0), getType());
+        return new GraphObject(getContext(), params.copy(10, 10), getType());
     }
 
     public int getLeftX() {
@@ -73,6 +75,25 @@ public class GraphObject extends View {
         params.height = Math.max(10, height);
         refreshLayoutParams();
         invalidate();
+    }
+
+    public static GraphObject parse(Context context, JSONObject json) throws JSONException {
+        GraphParams params = new GraphParams(json.getInt("x"), json.getInt("y"), json.getInt("width"), json.getInt("height"));
+        GraphType type = GraphType.valueOf(json.getString("type"));
+
+        return new GraphObject(context, params, type);
+    }
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("type", type.name());
+        json.put("x", params.x);
+        json.put("y", params.y);
+        json.put("width", params.width);
+        json.put("height", params.height);
+
+        return json;
     }
 
     public void setParams(GraphParams params) {
@@ -137,5 +158,13 @@ public class GraphObject extends View {
         void onSelect(GraphObject object);
 
         void onMove(GraphObject object);
+
+        void onAdd();
+
+        void onRemove();
+
+        void onResize();
+
+        void onCompleteMove();
     }
 }
