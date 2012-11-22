@@ -35,7 +35,6 @@ public class MainActivity extends Activity implements RightPanel.OnAddListener {
 
         plot.setListener(new GraphListener());
         toolbar.setListener(new ToolbarListener());
-        rightPanel.setDocumentPlot(plot);
         rightPanel.setOnAddListener(this);
 
         documentManager = new DocumentManager(getCacheDir().getParent() + "/document.json");

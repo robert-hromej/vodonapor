@@ -10,7 +10,6 @@ import com.mottimotti.vodonapor.GraphObject.GraphObject;
 import com.mottimotti.vodonapor.GraphObject.GraphParams;
 import com.mottimotti.vodonapor.R;
 import com.mottimotti.vodonapor.util.LayerPosition;
-import com.mottimotti.vodonapor.util.Magnet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -159,8 +158,6 @@ public class DocumentPlot extends RelativeLayout {
 
         private int startX;
         private int startY;
-
-        private Magnet magnet;
 
         @Override
         public boolean onTouch(View view, MotionEvent event) {

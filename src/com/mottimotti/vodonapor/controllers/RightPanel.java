@@ -17,8 +17,6 @@ public class RightPanel extends LinearLayout implements View.OnClickListener, Ad
 
     private ListView listView;
 
-    private DocumentPlot documentPlot;
-
     private GraphObject[] objects;
 
     private OnAddListener onAddListener;
@@ -31,10 +29,6 @@ public class RightPanel extends LinearLayout implements View.OnClickListener, Ad
 
         listView = (ListView) findViewById(R.id.objectList);
 
-        GraphType.BlueTriangle.name();
-
-        GraphType.valueOf("BlueTriangle"); // => GraphType.BlueTriangle
-
         objects = new GraphObject[]{
                 new GraphObject(context, new GraphParams(0, 0, 100, 100), GraphType.BlueTriangle),
                 new GraphObject(context, new GraphParams(0, 0, 100, 100), GraphType.YellowRect),
@@ -46,10 +40,6 @@ public class RightPanel extends LinearLayout implements View.OnClickListener, Ad
         listView.setOnItemLongClickListener(this);
 
         findViewById(R.id.openCloseBtn).setOnClickListener(this);
-    }
-
-    public void setDocumentPlot(DocumentPlot documentPlot) {
-        this.documentPlot = documentPlot;
     }
 
     @Override
