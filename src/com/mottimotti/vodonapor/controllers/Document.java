@@ -1,15 +1,16 @@
 package com.mottimotti.vodonapor.controllers;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
-import com.mottimotti.vodonapor.GraphObject.GraphParams;
-import com.mottimotti.vodonapor.R;
-import com.mottimotti.vodonapor.util.LayerPosition;
+import com.mottimotti.vodonapor.commands.ICommand;
+import com.mottimotti.vodonapor.commands.MoveCommand;
+import com.mottimotti.vodonapor.commands.ResizeCommand;
+import com.mottimotti.vodonapor.views.Graph;
+import com.mottimotti.vodonapor.views.GraphParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,74 +18,75 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DocumentPlot extends RelativeLayout {
+public class Document extends RelativeLayout {
 
     private int currentX, currentY;
 
-    public GraphObject selected;
+    public Graph selected;
 
-    private List<GraphObject> children;
+    private final List<Graph> graphs = new ArrayList<Graph>();
 
-    public GraphObject.Listener listener;
+    private Listener listener;
 
-    public DocumentPlot(Context context, AttributeSet attrs) {
+    public Document(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflater != null) inflater.inflate(R.layout.document_plot, this);
-
-        children = new ArrayList<GraphObject>();
     }
 
-    public void addGraphObject(GraphObject graphObject) {
-        children.add(graphObject);
-        addView(graphObject);
-
-        graphObject.setOnTouchListener(new ChildOnTouchListener());
-    }
-
-    public void addGraphObjectToCenter(GraphObject object) {
-        final int x = getWidth() / 2 + getScrollX() - object.params.width / 2;
-        final int y = getHeight() / 2 + getScrollY() - object.params.height / 2;
-
-        object.moveTo(x, y);
-
-        addGraphObject(object);
-    }
-
-    public void changePosition(LayerPosition layerPosition) {
-        if (layerPosition.change(children, selected)) {
-            for (GraphObject child : children) {
-                removeView(child);
-                addView(child);
-            }
+    public void addGraphObject(int index, Graph graph) {
+        graphs.add(index, graph);
+        graph.setOnTouchListener(new GraphOnTouchListener());
+        for (Graph child : graphs) {
+            removeView(child);
+            addView(child);
         }
     }
 
-    public LayerPosition getSelectedLayerPosition() {
-        int index = children.indexOf(selected);
+    public void addGraphObject(Graph graph) {
+        graphs.add(graph);
+        addView(graph);
 
-        if (index == 0) {
-            return LayerPosition.MOVE_BACK;
-        } else if (index + 1 == children.size()) {
-            return LayerPosition.MOVE_FRONT;
+        graph.setOnTouchListener(new GraphOnTouchListener());
+    }
+
+    public Point getViewCenter() {
+        final int x = getWidth() / 2 + getScrollX();
+        final int y = getHeight() / 2 + getScrollY();
+        return new Point(x, y);
+    }
+
+    public void changePosition(int fromIndex, int toIndex) {
+        Graph graph = graphs.remove(fromIndex);
+        graphs.add(toIndex, graph);
+
+        for (Graph child : graphs) {
+            removeView(child);
+            addView(child);
         }
+    }
 
-        return null;
+    public int size() {
+        return graphs.size();
+    }
+
+    public boolean isSelectedFront() {
+        return graphs.indexOf(selected) == graphs.size() - 1;
+    }
+
+    public boolean isSelectedBack() {
+        return graphs.indexOf(selected) == 0;
     }
 
     public void load(JSONObject json) throws JSONException {
-        scrollTo(0, 0);
         listener.onSelect(null);
 
         removeAllViews();
 
-        children.clear();
+        graphs.clear();
 
         JSONArray array = json.getJSONArray("GraphObjects");
 
         for (int i = 0; i < array.length(); i++) {
-            addGraphObject(GraphObject.parse(getContext(), array.getJSONObject(i)));
+            addGraphObject(Graph.parse(getContext(), array.getJSONObject(i)));
         }
 
     }
@@ -93,7 +95,7 @@ public class DocumentPlot extends RelativeLayout {
         JSONObject json = new JSONObject();
 
         JSONArray jsonArray = new JSONArray();
-        for (GraphObject child : children) jsonArray.put(child.toJson());
+        for (Graph child : graphs) jsonArray.put(child.toJson());
         json.put("GraphObjects", jsonArray);
 
         return json;
@@ -122,38 +124,27 @@ public class DocumentPlot extends RelativeLayout {
         return true;
     }
 
-    public void changeSelected(GraphObject selected) {
+    public void changeSelected(Graph selected) {
         if (this.selected != null) this.selected.setSelectedState(false);
         this.selected = selected;
-        this.selected.setSelectedState(true);
+        if (this.selected != null) this.selected.setSelectedState(true);
         listener.onSelect(selected);
     }
 
-    public void copySelectedObject() {
-        if (selected == null) return;
-
-        GraphObject newObject = selected.copy();
-
-        addGraphObject(newObject);
-
-        changeSelected(newObject);
+    public void removeGraphObject(Graph graph) {
+        graphs.remove(graph);
+        removeView(graph);
     }
 
-    public void deleteSelectedObject() {
-        if (selected == null) return;
-
-        children.remove(selected);
-        removeView(selected);
-        selected = null;
-
-        listener.onRemove();
-    }
-
-    public void setListener(GraphObject.Listener listener) {
+    public void setListener(Listener listener) {
         this.listener = listener;
     }
 
-    private class ChildOnTouchListener implements View.OnTouchListener {
+    public int indexOfSelected() {
+        return graphs.indexOf(selected);
+    }
+
+    private class GraphOnTouchListener implements View.OnTouchListener {
         private GraphParams originalParams;
 
         private int startX;
@@ -161,18 +152,18 @@ public class DocumentPlot extends RelativeLayout {
 
         @Override
         public boolean onTouch(View view, MotionEvent event) {
-            GraphObject graph = (GraphObject) view;
+            Graph graph = (Graph) view;
 
             if (selected != graph) changeSelected(graph);
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN: {
-                    graph.updateMagnet(children);
+                    graph.updateMagnet(graphs);
 
                     startX = (int) event.getRawX();
                     startY = (int) event.getRawY();
 
-                    originalParams = graph.params.copy(0, 0);
+                    originalParams = graph.params.copy();
 
                     break;
                 }
@@ -186,16 +177,22 @@ public class DocumentPlot extends RelativeLayout {
                     if (Toolbar.getTouchMode() == Toolbar.TouchMode.MOVE)
                         graph.moveTo(originalParams.x - x2, originalParams.y - y2);
 
-                    listener.onMove(graph);
+                    listener.onChangeParams(graph);
 
                     break;
                 }
                 case MotionEvent.ACTION_UP: {
+                    if (startX == (int) event.getRawX() && startY == (int) event.getRawY()) break;
+
+                    ICommand command;
+
                     if (Toolbar.getTouchMode() == Toolbar.TouchMode.RESIZE) {
-                        listener.onResize();
+                        command = new ResizeCommand(graph, originalParams, graph.params.copy());
                     } else {
-                        listener.onCompleteMove();
+                        command = new MoveCommand(graph, originalParams, graph.params.copy());
                     }
+
+                    listener.onCompleteChange(command);
 
                     break;
                 }
@@ -203,5 +200,13 @@ public class DocumentPlot extends RelativeLayout {
 
             return true;
         }
+    }
+
+    public static interface Listener {
+        void onSelect(Graph graph);
+
+        void onChangeParams(Graph graph);
+
+        void onCompleteChange(ICommand command);
     }
 }

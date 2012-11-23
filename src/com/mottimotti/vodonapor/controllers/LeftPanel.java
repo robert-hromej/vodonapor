@@ -9,7 +9,7 @@ import com.mottimotti.vodonapor.R;
 
 public class LeftPanel extends LinearLayout implements View.OnClickListener {
 
-    private View content;
+    private final View content;
 
     public LeftPanel(Context context, AttributeSet attrs) {
         super(context, attrs);

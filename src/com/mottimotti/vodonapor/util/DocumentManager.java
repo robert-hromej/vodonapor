@@ -1,29 +1,20 @@
 package com.mottimotti.vodonapor.util;
 
+import com.mottimotti.vodonapor.controllers.Document;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DocumentManager {
 
-    private String filePath;
-
-    private List<JSONObject> history;
-
-    private int currentVersion;
+    private final String filePath;
 
     public DocumentManager(String filePath) {
         this.filePath = filePath;
-        history = new ArrayList<JSONObject>();
-        currentVersion = -1;
     }
 
-    public JSONObject open() throws IOException, JSONException {
-        history.clear();
-
+    protected JSONObject open() throws IOException, JSONException {
         JSONObject json = null;
 
         File file = new File(filePath);
@@ -39,54 +30,55 @@ public class DocumentManager {
             json = new JSONObject(sb.toString());
         }
 
-        remember(json);
-
         return json;
     }
 
-    public boolean save() throws IOException {
-        InputStream is = getInputStream(history.get(currentVersion));
+    public void save(Document document) {
+        try {
+            InputStream is = getInputStream(document.toJson());
 
-        File file = new File(filePath);
+            File file = new File(filePath);
 
-        if (!file.exists()) file.createNewFile();
+            if (!file.exists()) file.createNewFile();
 
-        FileOutputStream os = new FileOutputStream(file);
+            FileOutputStream os = new FileOutputStream(file);
 
-        byte[] buffer = new byte[1024];
-        int numRead = 0;
-        while ((numRead = is.read(buffer)) != -1) os.write(buffer, 0, numRead);
-        os.close();
-        is.close();
-
-        return false;
-    }
-
-    public JSONObject undo() {
-        if (currentVersion < 1) return null;
-
-        return history.get(--currentVersion);
-    }
-
-    public JSONObject redo() {
-        if (currentVersion == getLastIndex()) return null;
-
-        return history.get(++currentVersion);
-    }
-
-    public void remember(JSONObject json) {
-        while (getLastIndex() > currentVersion) history.remove(getLastIndex());
-
-        history.add(json);
-
-        currentVersion = history.indexOf(json);
-    }
-
-    private int getLastIndex() {
-        return history.size() - 1;
+            byte[] buffer = new byte[1024];
+            int numRead = 0;
+            while ((numRead = is.read(buffer)) != -1) os.write(buffer, 0, numRead);
+            os.close();
+            is.close();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+//            TODO alert dialog
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+//            TODO alert dialog
+        } catch (IOException e) {
+            e.printStackTrace();
+//            TODO alert dialog
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private InputStream getInputStream(JSONObject json) throws UnsupportedEncodingException {
         return new ByteArrayInputStream(json.toString().getBytes("UTF-8"));
+    }
+
+    public void openDocument(Document document) {
+        try {
+            JSONObject json = open();
+
+            if (json == null) return;
+
+            document.load(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+//            TODO alert dialog
+        } catch (JSONException e) {
+            e.printStackTrace();
+//            TODO alert dialog
+        }
     }
 }

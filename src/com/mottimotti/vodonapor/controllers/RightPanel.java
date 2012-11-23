@@ -7,19 +7,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
-import com.mottimotti.vodonapor.GraphObject.GraphParams;
-import com.mottimotti.vodonapor.GraphObject.GraphType;
 import com.mottimotti.vodonapor.R;
-import com.mottimotti.vodonapor.models.GraphObjectAdapter;
+import com.mottimotti.vodonapor.models.GraphArrayAdapter;
+import com.mottimotti.vodonapor.views.Graph;
+import com.mottimotti.vodonapor.views.GraphParams;
+import com.mottimotti.vodonapor.views.GraphType;
 
 public class RightPanel extends LinearLayout implements View.OnClickListener, AdapterView.OnItemLongClickListener {
 
-    private ListView listView;
+    private final ListView listView;
 
-    private GraphObject[] objects;
+    private final Graph[] graphs;
 
-    private OnAddListener onAddListener;
+    private Listener listener;
 
     public RightPanel(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -29,12 +29,12 @@ public class RightPanel extends LinearLayout implements View.OnClickListener, Ad
 
         listView = (ListView) findViewById(R.id.objectList);
 
-        objects = new GraphObject[]{
-                new GraphObject(context, new GraphParams(0, 0, 100, 100), GraphType.BlueTriangle),
-                new GraphObject(context, new GraphParams(0, 0, 100, 100), GraphType.YellowRect),
-                new GraphObject(context, new GraphParams(0, 0, 100, 100), GraphType.GreenCircle)};
+        graphs = new Graph[]{
+                new Graph(context, new GraphParams(), GraphType.BlueTriangle),
+                new Graph(context, new GraphParams(), GraphType.YellowRect),
+                new Graph(context, new GraphParams(), GraphType.GreenCircle)};
 
-        GraphObjectAdapter adapter = new GraphObjectAdapter(context, objects);
+        GraphArrayAdapter adapter = new GraphArrayAdapter(context, graphs);
         listView.setAdapter(adapter);
 
         listView.setOnItemLongClickListener(this);
@@ -44,7 +44,7 @@ public class RightPanel extends LinearLayout implements View.OnClickListener, Ad
 
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        onAddListener.onAdd(objects[i].copy());
+        listener.onAdd(graphs[i].copy());
 
         return true;
     }
@@ -54,12 +54,12 @@ public class RightPanel extends LinearLayout implements View.OnClickListener, Ad
         listView.setVisibility((listView.getVisibility() == VISIBLE) ? GONE : VISIBLE);
     }
 
-    public void setOnAddListener(OnAddListener onAddListener) {
-        this.onAddListener = onAddListener;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
-    public static interface OnAddListener {
-        public void onAdd(GraphObject graphObject);
+    public static interface Listener {
+        public void onAdd(Graph graph);
     }
 
 }

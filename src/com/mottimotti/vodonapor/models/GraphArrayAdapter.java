@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
 import com.mottimotti.vodonapor.R;
+import com.mottimotti.vodonapor.views.Graph;
 
-public class GraphObjectAdapter extends ArrayAdapter<GraphObject> {
+public class GraphArrayAdapter extends ArrayAdapter<Graph> {
 
-    public GraphObjectAdapter(Context context, GraphObject[] items) {
+    public GraphArrayAdapter(Context context, Graph[] items) {
         super(context, R.layout._row, items);
     }
 

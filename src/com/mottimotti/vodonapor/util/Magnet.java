@@ -1,45 +1,50 @@
 package com.mottimotti.vodonapor.util;
 
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
+import com.mottimotti.vodonapor.views.Graph;
+import com.mottimotti.vodonapor.views.GraphParams;
 
 import java.util.HashSet;
 import java.util.List;
 
 public class Magnet {
 
-    private HashSet<Integer> listX = new HashSet<Integer>();
+    private final HashSet<Integer> listX = new HashSet<Integer>();
 
-    private HashSet<Integer> listY = new HashSet<Integer>();
+    private final HashSet<Integer> listY = new HashSet<Integer>();
 
-    private GraphObject currentObject;
+    private final Graph graph;
 
-    public Magnet(GraphObject object, List<GraphObject> children) {
-        this.currentObject = object;
+    public Magnet(Graph object, List<Graph> children) {
+        this.graph = object;
 
-        for (GraphObject child : children) {
-            if (currentObject == child) continue;
+        GraphParams params;
 
-            listX.add(child.getLeftX());
-            listX.add(child.getRightX());
-            listY.add(child.getTopY());
-            listY.add(child.getBottomY());
+        for (Graph child : children) {
+            if (graph == child) continue;
+
+            params = child.params;
+
+            listX.add(params.getLeftX());
+            listX.add(params.getRightX());
+            listY.add(params.getTopY());
+            listY.add(params.getBottomY());
         }
     }
 
     public int updateX(int x) {
-        return updateCoordinate(x, listX, currentObject.getWidth());
+        return updateCoordinate(x, listX, graph.getWidth());
     }
 
     public int updateY(int y) {
-        return updateCoordinate(y, listY, currentObject.getHeight());
+        return updateCoordinate(y, listY, graph.getHeight());
     }
 
     public int updateWidth(int width) {
-        return updateSize(width, listX, currentObject.getLeftX());
+        return updateSize(width, listX, graph.params.getLeftX());
     }
 
     public int updateHeight(int height) {
-        return updateSize(height, listY, currentObject.getTopY());
+        return updateSize(height, listY, graph.params.getTopY());
     }
 
     private int updateSize(int size, HashSet<Integer> list, int start) {

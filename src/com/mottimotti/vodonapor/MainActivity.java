@@ -1,27 +1,26 @@
 package com.mottimotti.vodonapor;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
-import com.mottimotti.vodonapor.controllers.DocumentPlot;
-import com.mottimotti.vodonapor.controllers.InfoBox;
+import com.mottimotti.vodonapor.commands.*;
+import com.mottimotti.vodonapor.controllers.Document;
+import com.mottimotti.vodonapor.controllers.InfoPanel;
 import com.mottimotti.vodonapor.controllers.RightPanel;
 import com.mottimotti.vodonapor.controllers.Toolbar;
 import com.mottimotti.vodonapor.util.DocumentManager;
 import com.mottimotti.vodonapor.util.LayerPosition;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.mottimotti.vodonapor.views.Graph;
 
-import java.io.IOException;
-
-public class MainActivity extends Activity implements RightPanel.OnAddListener {
+public class MainActivity extends Activity {
 
     private Toolbar toolbar;
-    private InfoBox infoBox;
-    private DocumentPlot plot;
+    private InfoPanel infoPanel;
+    private Document document;
     private RightPanel rightPanel;
 
     private DocumentManager documentManager;
+    private CommandManager commandManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,136 +28,105 @@ public class MainActivity extends Activity implements RightPanel.OnAddListener {
         setContentView(R.layout.main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        infoBox = (InfoBox) findViewById(R.id.infoBox);
-        plot = (DocumentPlot) findViewById(R.id.documentPlot);
+        infoPanel = (InfoPanel) findViewById(R.id.infoBox);
+        document = (Document) findViewById(R.id.documentPlot);
         rightPanel = (RightPanel) findViewById(R.id.rightPanel);
 
-        plot.setListener(new GraphListener());
+        document.setListener(new DocumentListener());
         toolbar.setListener(new ToolbarListener());
-        rightPanel.setOnAddListener(this);
+        rightPanel.setListener(new RightPanelListener());
 
         documentManager = new DocumentManager(getCacheDir().getParent() + "/document.json");
+        commandManager = new CommandManager();
+        commandManager.setListener(new CommandListener());
     }
 
-    @Override
-    public void onAdd(GraphObject graphObject) {
-        plot.addGraphObjectToCenter(graphObject);
-        plot.changeSelected(graphObject);
-        plot.listener.onAdd();
+    private class RightPanelListener implements RightPanel.Listener {
+        @Override
+        public void onAdd(Graph graph) {
+            Point center = document.getViewCenter();
+            center.offset(-graph.params.width / 2, -graph.params.height / 2);
+            graph.moveTo(center);
+            ICommand command = new AddCommand(document, graph);
+            commandManager.addCommand(command);
+            document.changeSelected(graph);
+        }
     }
 
-    private class GraphListener implements GraphObject.Listener {
+    private class CommandListener implements CommandManager.Listener {
         @Override
-        public void onSelect(GraphObject object) {
-            toolbar.updateButtons(object);
-            infoBox.update(object);
-            toolbar.updateButtons(plot);
+        public void onChangeState() {
+            toolbar.update(commandManager);
+        }
+    }
+
+    private class DocumentListener implements Document.Listener {
+        @Override
+        public void onSelect(Graph graph) {
+            toolbar.update(graph);
+            infoPanel.update(graph);
+            toolbar.update(document);
         }
 
         @Override
-        public void onMove(GraphObject object) {
-            infoBox.update(object);
+        public void onChangeParams(Graph graph) {
+            infoPanel.update(graph);
         }
 
         @Override
-        public void onAdd() {
-            try {
-                documentManager.remember(plot.toJson());
-            } catch (JSONException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
-        @Override
-        public void onRemove() {
-            try {
-                documentManager.remember(plot.toJson());
-            } catch (JSONException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
-        @Override
-        public void onResize() {
-            try {
-                documentManager.remember(plot.toJson());
-            } catch (JSONException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
-        @Override
-        public void onCompleteMove() {
-            try {
-                documentManager.remember(plot.toJson());
-            } catch (JSONException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+        public void onCompleteChange(ICommand command) {
+            commandManager.addCommand(command);
         }
     }
 
     private class ToolbarListener implements Toolbar.Listener {
         @Override
-        public void onChange(LayerPosition layerPosition) {
-            if (plot.selected == null) return;
+        public void onChangePosition(LayerPosition layerPosition) {
+            if (document.selected == null) return;
 
-            plot.changePosition(layerPosition);
-            toolbar.updateButtons(plot);
+            if (document.isSelectedBack() && (layerPosition == LayerPosition.MOVE_BACK || layerPosition == LayerPosition.MOVE_BACKWARDS))
+                return;
+            if (document.isSelectedFront() && (layerPosition == LayerPosition.MOVE_FRONT || layerPosition == LayerPosition.MOVE_FORWARDS))
+                return;
+
+            ICommand command = new ChangePositionCommand(document, layerPosition);
+            commandManager.addCommand(command);
+            toolbar.update(document);
         }
 
         @Override
-        public void onCopy() {
-            plot.copySelectedObject();
+        public void onDuplicate() {
+            ICommand command = new DuplicateCommand(document, document.selected);
+            commandManager.addCommand(command);
         }
 
         @Override
         public void onDelete() {
-            plot.deleteSelectedObject();
-            toolbar.updateButtons();
+            if (document.selected == null) return;
+
+            ICommand command = new RemoveCommand(document, document.selected, document.indexOfSelected());
+            commandManager.addCommand(command);
         }
 
         @Override
         public void onSave() {
-            try {
-                documentManager.remember(plot.toJson());
-                documentManager.save();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            documentManager.save(document);
         }
 
         @Override
         public void onOpen() {
-            try {
-                JSONObject json = documentManager.open();
-                if (json != null) plot.load(json);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            documentManager.openDocument(document);
+            commandManager.resetHistory();
         }
 
         @Override
         public void onRedo() {
-            try {
-                plot.load(documentManager.redo());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            commandManager.redo();
         }
 
         @Override
         public void onUndo() {
-            try {
-                JSONObject json = documentManager.undo();
-                if (json != null) plot.load(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            commandManager.undo();
         }
     }
-
 }

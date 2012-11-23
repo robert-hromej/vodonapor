@@ -5,9 +5,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import com.mottimotti.vodonapor.GraphObject.GraphObject;
 import com.mottimotti.vodonapor.R;
+import com.mottimotti.vodonapor.commands.CommandManager;
 import com.mottimotti.vodonapor.util.LayerPosition;
+import com.mottimotti.vodonapor.views.Graph;
 
 public class Toolbar extends LinearLayout implements View.OnClickListener {
 
@@ -45,7 +46,8 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
 
         for (View button : allButtons) button.setOnClickListener(this);
 
-        updateButtons();
+        update();
+
         setTouchMode(TouchMode.MOVE);
     }
 
@@ -69,19 +71,19 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
                 listener.onUndo();
                 break;
             case R.id.moveBackBtn:
-                listener.onChange(LayerPosition.MOVE_BACK);
+                listener.onChangePosition(LayerPosition.MOVE_BACK);
                 break;
             case R.id.moveBackwardsBtn:
-                listener.onChange(LayerPosition.MOVE_BACKWARDS);
+                listener.onChangePosition(LayerPosition.MOVE_BACKWARDS);
                 break;
             case R.id.moveFrontBtn:
-                listener.onChange(LayerPosition.MOVE_FRONT);
+                listener.onChangePosition(LayerPosition.MOVE_FRONT);
                 break;
             case R.id.moveForwardsBtn:
-                listener.onChange(LayerPosition.MOVE_FORWARDS);
+                listener.onChangePosition(LayerPosition.MOVE_FORWARDS);
                 break;
             case R.id.copyBtn:
-                listener.onCopy();
+                listener.onDuplicate();
                 break;
             case R.id.deleteBtn:
                 listener.onDelete();
@@ -120,23 +122,21 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         Toolbar.touchMode = touchMode;
     }
 
-    public void updateButtons() {
+    public void update() {
         View[] views = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn};
         for (View view : views) view.setAlpha(HIDE_ALPHA);
     }
 
-    public void updateButtons(GraphObject object) {
+    public void update(Graph object) {
         View[] views = {copyBtn, deleteBtn, moveBackBtn, moveBackwardBtn, moveForwardBtn, moveFrontBtn};
 
         for (View view : views)
             view.setAlpha((object == null) ? HIDE_ALPHA : 1f);
     }
 
-    public void updateButtons(DocumentPlot plot) {
-        LayerPosition layerPosition = plot.getSelectedLayerPosition();
-
-        float alpha1 = (layerPosition == LayerPosition.MOVE_BACK) ? HIDE_ALPHA : 1f;
-        float alpha2 = (layerPosition == LayerPosition.MOVE_FRONT) ? HIDE_ALPHA : 1f;
+    public void update(Document plot) {
+        final float alpha1 = plot.isSelectedBack() ? HIDE_ALPHA : 1f;
+        final float alpha2 = plot.isSelectedFront() ? HIDE_ALPHA : 1f;
 
         moveBackBtn.setAlpha(alpha1);
         moveBackwardBtn.setAlpha(alpha1);
@@ -145,10 +145,17 @@ public class Toolbar extends LinearLayout implements View.OnClickListener {
         moveForwardBtn.setAlpha(alpha2);
     }
 
-    public static interface Listener {
-        void onChange(LayerPosition layerPosition);
+    public void update(CommandManager commandManager) {
+        final int state = commandManager.getState();
 
-        void onCopy();
+        undoBtn.setAlpha((state == CommandManager.ALL || state == CommandManager.ONLY_UNDO) ? 1f : HIDE_ALPHA);
+        redoBtn.setAlpha((state == CommandManager.ALL || state == CommandManager.ONLY_REDO) ? 1f : HIDE_ALPHA);
+    }
+
+    public static interface Listener {
+        void onChangePosition(LayerPosition layerPosition);
+
+        void onDuplicate();
 
         void onDelete();
 

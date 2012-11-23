@@ -22,19 +22,18 @@
                       android:layout_height="fill_parent"
                       android:layout_weight="1">
 
-            <com.mottimotti.vodonapor.controllers.DocumentPlot
+            <com.mottimotti.vodonapor.controllers.Document
                     android:id="@+id/documentPlot"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:background="#645343"/>
 
-            <com.mottimotti.vodonapor.controllers.InfoBox
+            <com.mottimotti.vodonapor.controllers.InfoPanel
                     android:id="@+id/infoBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
         </LinearLayout>
-
 
         <com.mottimotti.vodonapor.controllers.RightPanel
                 android:id="@+id/rightPanel"
