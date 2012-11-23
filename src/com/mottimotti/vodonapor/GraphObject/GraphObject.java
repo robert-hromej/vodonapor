@@ -26,8 +26,6 @@ public class GraphObject extends View {
     public GraphObject(Context context, GraphParams params, GraphType type) {
         super(context);
 
-        GraphType.EMPTY.name();
-
         setType(type);
         setParams(params);
     }
@@ -55,7 +53,7 @@ public class GraphObject extends View {
     public void moveTo(int x, int y) {
         if (magnet != null && Toolbar.getMagnetMode() == Toolbar.MagnetMode.ON) {
             x = magnet.updateX(x);
-            y = magnet.updateX(y);
+            y = magnet.updateY(y);
         }
 
         params.x = x;
@@ -152,19 +150,5 @@ public class GraphObject extends View {
 
     public void setType(GraphType type) {
         this.type = type;
-    }
-
-    public static interface Listener {
-        void onSelect(GraphObject object);
-
-        void onMove(GraphObject object);
-
-        void onAdd();
-
-        void onRemove();
-
-        void onResize();
-
-        void onCompleteMove();
     }
 }
