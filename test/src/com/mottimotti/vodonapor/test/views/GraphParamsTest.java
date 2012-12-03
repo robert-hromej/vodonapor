@@ -29,8 +29,8 @@ public class GraphParamsTest extends TestCase {
     }
 
     @Test
-    public void getCoordinate() {
-        assertEquals(params.getCoordinate(), new Point(10, 20));
+    public void testGetCoordinate() {
+        assertEquals(params.getCoordinate(), new Point(10, 40));
     }
 
     @Test
