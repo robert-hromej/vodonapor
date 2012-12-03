@@ -22,6 +22,10 @@ public class Graph extends View {
 
     private GraphType type = GraphType.EMPTY;
 
+    public Graph(Context contex) {
+        this(contex, new GraphParams(), GraphType.EMPTY);
+    }
+
     public Graph(Context context, GraphParams params, GraphType type) {
         super(context);
 

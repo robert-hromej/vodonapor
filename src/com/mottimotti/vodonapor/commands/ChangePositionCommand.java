@@ -16,9 +16,9 @@ public class ChangePositionCommand implements ICommand {
         if (layerPosition == LayerPosition.MOVE_BACK) {
             this.toIndex = 0;
         } else if (layerPosition == LayerPosition.MOVE_BACKWARDS) {
-            this.toIndex = fromIndex - 1;
+            this.toIndex = Math.max(fromIndex - 1, 0);
         } else if (layerPosition == LayerPosition.MOVE_FORWARDS) {
-            this.toIndex = fromIndex + 1;
+            this.toIndex = Math.min(fromIndex + 1, document.size() - 1);
         } else {
             this.toIndex = document.size() - 1;
         }

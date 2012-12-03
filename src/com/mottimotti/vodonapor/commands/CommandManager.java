@@ -24,6 +24,7 @@ public class CommandManager {
 
     public void undo() {
         if (currentVersion < 0) return;
+
         ICommand command = history.get(currentVersion--);
         command.undo();
         updateState();
@@ -31,6 +32,7 @@ public class CommandManager {
 
     public void redo() {
         if (currentVersion == getLastIndex()) return;
+
         ICommand command = history.get(++currentVersion);
         command.execute();
         updateState();

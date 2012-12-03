@@ -28,6 +28,10 @@ public class Document extends RelativeLayout {
 
     private Listener listener;
 
+    public Document(Context context) {
+        super(context);
+    }
+
     public Document(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -122,6 +126,10 @@ public class Document extends RelativeLayout {
             }
         }
         return true;
+    }
+
+    public void changeSelected(int index) {
+        changeSelected(graphs.get(index));
     }
 
     public void changeSelected(Graph selected) {
